@@ -3462,7 +3462,9 @@ enum ENUM_AIS_STATE aisFsmJoinCompleteAction(IN struct ADAPTER *prAdapter,
 					cnmStaRecFree(prAdapter, prStaRec);
 
 				if (prAisBssInfo->eConnectionState ==
-				    MEDIA_STATE_CONNECTED) {
+				    MEDIA_STATE_CONNECTED ||
+				    prStaRec->u2StatusCode ==
+				    STATUS_CODE_ASSOC_REJECTED_TEMPORARILY) {
 					struct PARAM_SSID rSsid;
 
 					/* roaming fail count and time */
