@@ -144,8 +144,14 @@ u_int8_t wlan_perf_monitor_force_enable = FALSE;
 #endif
 #endif
 
-static struct notifier_block wlan_fb_notifier;
+static int wlan_fb_notifier_callback(struct notifier_block
+				*self, unsigned long event, void *data);
+
 void *wlan_fb_notifier_priv_data;
+static struct notifier_block wlan_fb_notifier = {
+	.notifier_call = wlan_fb_notifier_callback
+};
+
 /*******************************************************************************
  *                                 M A C R O S
  *******************************************************************************
@@ -9481,7 +9487,6 @@ int32_t kalFbNotifierReg(IN struct GLUE_INFO *prGlueInfo)
 	int32_t i4Ret;
 
 	wlan_fb_notifier_priv_data = prGlueInfo;
-	wlan_fb_notifier.notifier_call = wlan_fb_notifier_callback;
 
 	i4Ret = fb_register_client(&wlan_fb_notifier);
 	if (i4Ret)
