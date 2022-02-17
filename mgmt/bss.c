@@ -292,24 +292,16 @@ void bssDetermineStaRecPhyTypeSet(IN struct ADAPTER *prAdapter,
 
 		eEncStatus = prConnSettings->eEncStatus;
 
-		if (!
-		    ((eEncStatus == ENUM_ENCRYPTION3_ENABLED)
-			|| (eEncStatus == ENUM_ENCRYPTION3_KEY_ABSENT)
-			|| (eEncStatus == ENUM_ENCRYPTION4_ENABLED)
-			|| (eEncStatus == ENUM_ENCRYPTION4_KEY_ABSENT)
-			|| (eEncStatus == ENUM_ENCRYPTION_DISABLED)
-			|| (prConnSettings->u2WSCAssocInfoIELen)
-#if CFG_SUPPORT_WAPI
-			|| (prConnSettings->u2WapiAssocInfoIESz)
-#endif
-)) {
+		if (!(eEncStatus == ENUM_ENCRYPTION3_ENABLED ||
+		      eEncStatus == ENUM_ENCRYPTION3_KEY_ABSENT ||
+		      eEncStatus == ENUM_ENCRYPTION_DISABLED ||
+		      eEncStatus == ENUM_ENCRYPTION4_ENABLED ||
+		      eEncStatus == ENUM_ENCRYPTION4_KEY_ABSENT
+		     )) {
 			DBGLOG(BSS, INFO,
-			       "Ignore the HT Bit for TKIP as pairwise cipher configed!\n");
+			       "Ignore the HT/VHT Bit for TKIP as pairwise cipher configed!\n");
 			prStaRec->ucPhyTypeSet &=
 			    ~(PHY_TYPE_BIT_HT | PHY_TYPE_BIT_VHT);
-#if (CFG_SUPPORT_802_11AX == 1)
-			prStaRec->ucPhyTypeSet &= ~(PHY_TYPE_BIT_HE);
-#endif
 		}
 
 		ucHtOption = prWifiVar->ucStaHt;
@@ -2581,7 +2573,7 @@ int8_t bssGetRxNss(IN struct ADAPTER *prAdapter,
 		return -EINVAL;
 	}
 
-	pucIe = mtk_cfg80211_find_ie_match_mask(
+	pucIe = kalFindIeMatchMask(
 		ELEM_ID_HT_CAP,
 		&prBssDesc->aucIEBuf[0],
 		prBssDesc->u2IELength,
@@ -2665,8 +2657,8 @@ uint32_t bssGetIotApAction(IN struct ADAPTER *prAdapter,
 
 		/*Match Vendor OUI*/
 		if (u2MatchFlag & BIT(WLAN_IOT_AP_FG_OUI)) {
-			pucIe = mtk_cfg80211_find_ie_match_mask(
-				ELEM_ID_VENDOR,
+			pucIe = kalFindIeMatchMask(
+				WLAN_EID_VENDOR_SPECIFIC,
 				pucIes, prBssDesc->u2IELength,
 				prIotApRule->aVendorOui,
 				MAC_OUI_LEN, 2, NULL);
@@ -2680,8 +2672,8 @@ uint32_t bssGetIotApAction(IN struct ADAPTER *prAdapter,
 			pucMask =
 				u2MatchFlag & BIT(WLAN_IOT_AP_FG_DATA_MASK) ?
 				&prIotApRule->aVendorDataMask[0] : NULL;
-			pucIe = mtk_cfg80211_find_ie_match_mask(
-				ELEM_ID_VENDOR,
+			pucIe = kalFindIeMatchMask(
+				WLAN_EID_VENDOR_SPECIFIC,
 				pucIes, prBssDesc->u2IELength,
 				prIotApRule->aVendorData,
 				prIotApRule->ucDataLen, 5, pucMask);

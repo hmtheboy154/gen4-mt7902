@@ -2029,5 +2029,10 @@ static inline void kal_eth_hw_addr_set(struct net_device *dev,
 #endif
 }
 
+#if CFG_SUPPORT_WPA3
+int kalExternalAuthRequest(IN struct ADAPTER *prAdapter,
+			   IN uint8_t uBssIndex);
+#endif
+
 #endif /* _GL_KAL_H */
 

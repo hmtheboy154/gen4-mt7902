@@ -111,9 +111,6 @@
  *******************************************************************************
  */
 
-void wapiGenerateWAPIIE(IN struct ADAPTER *prAdapter,
-			IN struct MSDU_INFO *prMsduInfo);
-
 u_int8_t wapiParseWapiIE(IN struct WAPI_INFO_ELEM
 			 *prInfoElem, OUT struct WAPI_INFO *prWapiInfo);
 

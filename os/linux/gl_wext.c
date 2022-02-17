@@ -977,49 +977,6 @@ u_int8_t wextSrchDesiredOsenIE(IN uint8_t *pucIEStart,
 
 /*----------------------------------------------------------------------------*/
 /*!
- * \brief Find the desired interworking Information Element according to
- *	  desiredElemID.
- *
- * \param[in] pucIEStart IE starting address.
- * \param[in] i4TotalIeLen Total length of all the IE.
- * \param[in] ucDesiredElemId Desired element ID.
- * \param[out] ppucDesiredIE Pointer to the desired IE.
- *
- * \retval TRUE Find the desired IE.
- * \retval FALSE Desired IE not found.
- *
- * \note
- */
-/*----------------------------------------------------------------------------*/
-u_int8_t wextSrchDesiredInterworkingIE(IN uint8_t
-				       *pucIEStart, IN int32_t i4TotalIeLen,
-				       OUT uint8_t **ppucDesiredIE)
-{
-	int32_t i4InfoElemLen;
-
-	ASSERT(pucIEStart);
-	ASSERT(ppucDesiredIE);
-
-	while (i4TotalIeLen >= 2) {
-		i4InfoElemLen = (int32_t) pucIEStart[1] + 2;
-
-		if (pucIEStart[0] == ELEM_ID_INTERWORKING
-		    && i4InfoElemLen <= i4TotalIeLen) {
-			*ppucDesiredIE = &pucIEStart[0];
-			return TRUE;
-		}
-
-		/* check desired EID */
-		/* Select next information element. */
-		i4TotalIeLen -= i4InfoElemLen;
-		pucIEStart += i4InfoElemLen;
-	}
-
-	return FALSE;
-} /* wextSrchDesiredInterworkingIE */
-
-/*----------------------------------------------------------------------------*/
-/*!
  * \brief Find the desired Adv Protocol Information Element according to
  *	  desiredElemID.
  *
@@ -1060,49 +1017,6 @@ u_int8_t wextSrchDesiredAdvProtocolIE(IN uint8_t
 
 	return FALSE;
 }				/* wextSrchDesiredAdvProtocolIE */
-
-/*----------------------------------------------------------------------------*/
-/*!
- * \brief Find the desired Roaming Consortium Information Element according to
- *	  desiredElemID.
- *
- * \param[in] pucIEStart IE starting address.
- * \param[in] i4TotalIeLen Total length of all the IE.
- * \param[in] ucDesiredElemId Desired element ID.
- * \param[out] ppucDesiredIE Pointer to the desired IE.
- *
- * \retval TRUE Find the desired IE.
- * \retval FALSE Desired IE not found.
- *
- * \note
- */
-/*----------------------------------------------------------------------------*/
-u_int8_t wextSrchDesiredRoamingConsortiumIE(
-	IN uint8_t *pucIEStart, IN int32_t i4TotalIeLen,
-	OUT uint8_t **ppucDesiredIE)
-{
-	int32_t i4InfoElemLen;
-
-	ASSERT(pucIEStart);
-	ASSERT(ppucDesiredIE);
-
-	while (i4TotalIeLen >= 2) {
-		i4InfoElemLen = (int32_t) pucIEStart[1] + 2;
-
-		if (pucIEStart[0] == ELEM_ID_ROAMING_CONSORTIUM
-		    && i4InfoElemLen <= i4TotalIeLen) {
-			*ppucDesiredIE = &pucIEStart[0];
-			return TRUE;
-		}
-
-		/* check desired EID */
-		/* Select next information element. */
-		i4TotalIeLen -= i4InfoElemLen;
-		pucIEStart += i4InfoElemLen;
-	}
-
-	return FALSE;
-}				/* wextSrchDesiredRoamingConsortiumIE */
 
 #endif /* CFG_SUPPORT_PASSPOINT */
 
@@ -4388,22 +4302,7 @@ static void wext_support_ioctl_SIOCSIWGENIE(
 	rStatus = kalIoctl(prGlueInfo, wlanoidSetWapiAssocInfo, prExtraBuf,
 			   u4ExtraSize, FALSE, FALSE, FALSE, &u4BufLen);
 	if (rStatus != WLAN_STATUS_SUCCESS) {
-#endif
-#if CFG_SUPPORT_WPS2
-		uint8_t *prDesiredIE = NULL;
-
-		if (wextSrchDesiredWPSIE(prExtraBuf, u4ExtraSize, 0xDD,
-					 (uint8_t **) &prDesiredIE)) {
-			rStatus =
-				kalIoctl(prGlueInfo, wlanoidSetWSCAssocInfo,
-					 prDesiredIE, IE_SIZE(prDesiredIE),
-					 FALSE, FALSE, FALSE, &u4BufLen);
-			if (rStatus != WLAN_STATUS_SUCCESS) {
 				/* do nothing */
-			}
-		}
-#endif
-#if CFG_SUPPORT_WAPI
 	}
 #endif
 

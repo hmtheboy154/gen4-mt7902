@@ -674,6 +674,7 @@ enum ENUM_PARAM_AUTH_MODE {
 	AUTH_MODE_WPA2_FT_PSK,              /* 802.11r */
 	AUTH_MODE_WPA_OSEN,
 	AUTH_MODE_WPA3_SAE,
+	AUTH_MODE_WPA3_OWE,
 	AUTH_MODE_NUM                       /*!< Upper bound, not real case */
 };
 

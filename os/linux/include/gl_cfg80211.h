@@ -822,11 +822,10 @@ int mtk_cfg_get_txpower(struct wiphy *wiphy,
 int mtk_cfg80211_update_ft_ies(struct wiphy *wiphy, struct net_device *dev,
 				struct cfg80211_update_ft_ies_params *ftie);
 
-const uint8_t *mtk_cfg80211_find_ie_match_mask(uint8_t eid,
-				const uint8_t *ies, int len,
-				const uint8_t *match,
-				int match_len, int match_offset,
-				const uint8_t *match_mask);
+#if CFG_SUPPORT_WPA3
+int mtk_cfg80211_external_auth(struct wiphy *wiphy, struct net_device *dev,
+			       struct cfg80211_external_auth_params *params);
+#endif
 
 int mtk_IsP2PNetDevice(struct GLUE_INFO *prGlueInfo,
 			  struct net_device *ndev);

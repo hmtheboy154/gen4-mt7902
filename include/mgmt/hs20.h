@@ -117,8 +117,6 @@ struct HS20_INFO {
 	uint8_t ucNumBssidPoolEntry;
 	u_int8_t fgIsHS2SigmaMode;
 
-	uint8_t aucHS20AssocInfoIE[200];	/*for Assoc req */
-	uint16_t u2HS20AssocInfoIELen;
 	uint8_t ucHotspotConfig;
 	u_int8_t fgConnectHS20AP;
 
@@ -163,15 +161,6 @@ struct HS20_INFO {
  *                              F U N C T I O N S
  ******************************************************************************
  */
-
-void hs20GenerateInterworkingIE(IN struct ADAPTER *prAdapter,
-		OUT struct MSDU_INFO *prMsduInfo);
-
-void hs20GenerateRoamingConsortiumIE(IN struct ADAPTER *prAdapter,
-		OUT struct MSDU_INFO *prMsduInfo);
-
-void hs20GenerateHS20IE(IN struct ADAPTER *prAdapter,
-		OUT struct MSDU_INFO *prMsduInfo);
 
 void hs20FillExtCapIE(struct ADAPTER *prAdapter,
 		struct BSS_INFO *prBssInfo, struct MSDU_INFO *prMsduInfo);

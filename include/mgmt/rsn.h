@@ -107,6 +107,10 @@
 #define WLAN_AKM_SUITE_FT_8021X         0x000FAC03
 #define WLAN_AKM_SUITE_FT_PSK           0x000FAC04
 #endif
+/* Add AKM SUITE for OWE since kernel haven't defined it. */
+#if KERNEL_VERSION(5, 17, 0) >= CFG80211_VERSION_CODE
+#define WLAN_AKM_SUITE_OWE              0x000FAC12
+#endif
 #if CFG_SUPPORT_802_11W
 #define RSN_AKM_SUITE_802_1X_SHA256     0x05AC0F00
 #define RSN_AKM_SUITE_PSK_SHA256        0x06AC0F00
@@ -285,11 +289,6 @@ uint32_t rsnDelPmkid(IN struct ADAPTER *prAdapter,
 
 uint32_t rsnFlushPmkid(IN struct ADAPTER *prAdapter,
 	IN uint8_t ucBssIndex);
-
-#if CFG_SUPPORT_WPS2
-void rsnGenerateWSCIE(IN struct ADAPTER *prAdapter,
-		      IN struct MSDU_INFO *prMsduInfo);
-#endif
 
 #if CFG_SUPPORT_802_11W
 uint32_t rsnCheckBipKeyInstalled(IN struct ADAPTER

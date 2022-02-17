@@ -1745,10 +1745,6 @@ cnmPeerUpdate(struct ADAPTER *prAdapter, void *pvSetBuffer,
 			if (!((eEncStatus == ENUM_ENCRYPTION3_ENABLED)
 				|| (eEncStatus == ENUM_ENCRYPTION3_KEY_ABSENT)
 				|| (eEncStatus == ENUM_ENCRYPTION_DISABLED)
-				|| (prConnSettings->u2WSCAssocInfoIELen)
-#if CFG_SUPPORT_WAPI
-				|| (prConnSettings->u2WapiAssocInfoIESz)
-#endif
 			    )) {
 
 				prStaRec->ucPhyTypeSet &= ~PHY_TYPE_BIT_HT;

@@ -149,6 +149,8 @@ enum ENUM_MSG_ID {
 	** FT
 	*/
 	MID_OID_SAA_FSM_CONTINUE,
+	/* OID notify SAA to continue SAE authentication/association fsm */
+	MID_OID_SAA_FSM_EXTERNAL_AUTH,
 	/* AIS notify SAA for Aborting authentication/association fsm */
 	MID_AIS_SAA_FSM_ABORT,
 	/* SAA notify AIS for indicating join complete */
@@ -411,6 +413,12 @@ struct MSG_SAA_FT_CONTINUE {
 	** Request Protocol
 	*/
 	u_int8_t fgFTRicRequest;
+};
+
+struct MSG_SAA_EXTERNAL_AUTH_DONE {
+	struct MSG_HDR rMsgHdr;
+	struct STA_RECORD *prStaRec;
+	uint16_t status;
 };
 
 /* specific message data types */

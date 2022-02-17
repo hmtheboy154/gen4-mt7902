@@ -123,6 +123,7 @@ static uint8_t *apucDebugMsg[] = {
 	(uint8_t *) DISP_STRING("MID_OID_AIS_FSM_ABORT"),
 	(uint8_t *) DISP_STRING("MID_AIS_SAA_FSM_START"),
 	(uint8_t *) DISP_STRING("MID_OID_SAA_FSM_CONTINUE"),
+	(uint8_t *) DISP_STRING("MID_OID_SAA_FSM_EXTERNAL_AUTH"),
 	(uint8_t *) DISP_STRING("MID_AIS_SAA_FSM_ABORT"),
 	(uint8_t *) DISP_STRING("MID_SAA_AIS_JOIN_COMPLETE"),
 
@@ -258,6 +259,7 @@ static struct MSG_HNDL_ENTRY arMsgMapTable[] = {
 	{MID_OID_AIS_FSM_ABORT, aisFsmRunEventAbort},
 	{MID_AIS_SAA_FSM_START, saaFsmRunEventStart},
 	{MID_OID_SAA_FSM_CONTINUE, saaFsmRunEventFTContinue},
+	{MID_OID_SAA_FSM_EXTERNAL_AUTH, saaFsmRunEventExternalAuthDone},
 	{MID_AIS_SAA_FSM_ABORT, saaFsmRunEventAbort},
 	{MID_SAA_AIS_JOIN_COMPLETE, aisFsmRunEventJoinComplete},
 

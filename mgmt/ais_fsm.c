@@ -727,6 +727,7 @@ void aisFsmStateInit_JOIN(IN struct ADAPTER *prAdapter,
 		case AUTH_MODE_WPA2:
 		case AUTH_MODE_WPA2_PSK:
 		case AUTH_MODE_WPA_OSEN:
+		case AUTH_MODE_WPA3_OWE:
 			prAisFsmInfo->ucAvailableAuthTypes =
 			    (uint8_t) AUTH_TYPE_OPEN_SYSTEM;
 			break;
@@ -742,6 +743,13 @@ void aisFsmStateInit_JOIN(IN struct ADAPTER *prAdapter,
 			prAisFsmInfo->ucAvailableAuthTypes =
 			    (uint8_t) (AUTH_TYPE_OPEN_SYSTEM |
 				       AUTH_TYPE_SHARED_KEY);
+			break;
+
+		case AUTH_MODE_WPA3_SAE:
+			DBGLOG(AIS, LOUD,
+			       "JOIN INIT: eAuthMode == AUTH_MODE_SAE\n");
+			prAisFsmInfo->ucAvailableAuthTypes =
+			    (uint8_t) AUTH_TYPE_SAE;
 			break;
 
 		default:
@@ -810,6 +818,10 @@ void aisFsmStateInit_JOIN(IN struct ADAPTER *prAdapter,
 			prAisFsmInfo->ucAvailableAuthTypes =
 			    (uint8_t) AUTH_TYPE_FAST_BSS_TRANSITION;
 			DBGLOG(AIS, TRACE, "FT: RSN FT roaming\n");
+			break;
+		case AUTH_MODE_WPA3_SAE:
+			prAisFsmInfo->ucAvailableAuthTypes =
+			    (uint8_t) AUTH_TYPE_SAE;
 			break;
 		default:
 			prAisFsmInfo->ucAvailableAuthTypes =

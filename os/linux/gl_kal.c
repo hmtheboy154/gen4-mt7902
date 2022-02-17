@@ -1428,7 +1428,7 @@ kalIndicateStatusAndComplete(IN struct GLUE_INFO
 	struct cfg80211_bss *bss = NULL;
 	uint8_t ucChannelNum;
 	struct BSS_DESC *prBssDesc = NULL;
-	struct CONNECTION_SETTINGS *prConnSettings;
+	struct CONNECTION_SETTINGS *prConnSettings = NULL;
 	enum ENUM_BAND eBand;
 #endif
 	struct ADAPTER *prAdapter = NULL;
@@ -1815,6 +1815,12 @@ kalIndicateStatusAndComplete(IN struct GLUE_INFO
 
 
 #endif
+		}
+		prConnSettings = aisGetConnSettings(prAdapter, ucBssIndex);
+		if (prConnSettings && prConnSettings->assocIeLen > 0) {
+			kalMemFree(prConnSettings->pucAssocIEs, VIR_MEM_TYPE,
+				   prConnSettings->assocIeLen);
+			prConnSettings->assocIeLen = 0;
 		}
 #endif /* #if (CFG_SUPPORT_SUPPLICANT_SME == 1) */
 
@@ -10147,6 +10153,46 @@ kalApplyCustomRegulatory(IN struct wiphy *pWiphy,
 
 	/* update to kernel */
 	wiphy_apply_custom_regulatory(pWiphy, pRegdom);
+}
+#endif
+
+#if CFG_SUPPORT_WPA3
+int kalExternalAuthRequest(IN struct ADAPTER *prAdapter,
+				   IN uint8_t uBssIndex)
+{
+	struct cfg80211_external_auth_params params;
+	struct AIS_FSM_INFO *prAisFsmInfo = NULL;
+	struct BSS_DESC *prBssDesc = NULL;
+	struct net_device *ndev = NULL;
+
+	prAisFsmInfo = aisGetAisFsmInfo(prAdapter, uBssIndex);
+	if (!prAisFsmInfo) {
+		DBGLOG(SAA, WARN,
+		       "SAE auth failed with NULL prAisFsmInfo\n");
+		return WLAN_STATUS_INVALID_DATA;
+	}
+
+	prBssDesc = prAisFsmInfo->prTargetBssDesc;
+	if (!prBssDesc) {
+		DBGLOG(SAA, WARN,
+		       "SAE auth failed without prTargetBssDesc\n");
+		return WLAN_STATUS_INVALID_DATA;
+	}
+
+	ndev = prAdapter->prGlueInfo->prDevHandler;
+	params.action = NL80211_EXTERNAL_AUTH_START;
+	COPY_MAC_ADDR(params.bssid, prBssDesc->aucBSSID);
+	COPY_SSID(params.ssid.ssid, params.ssid.ssid_len,
+		  prBssDesc->aucSSID, prBssDesc->ucSSIDLen);
+	params.key_mgmt_suite = RSN_AKM_SUITE_SAE;
+	DBGLOG(AIS, INFO, "[WPA3] "MACSTR" %s %d %d %02x-%02x-%02x-%02x",
+	       params.bssid, params.ssid.ssid,
+	       params.ssid.ssid_len, params.action,
+	       (uint8_t) (params.key_mgmt_suite & 0x000000FF),
+	       (uint8_t) ((params.key_mgmt_suite >> 8) & 0x000000FF),
+	       (uint8_t) ((params.key_mgmt_suite >> 16) & 0x000000FF),
+	       (uint8_t) ((params.key_mgmt_suite >> 24) & 0x000000FF));
+	return cfg80211_external_auth_request(ndev, &params, GFP_KERNEL);
 }
 #endif
 

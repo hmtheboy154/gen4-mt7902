@@ -108,51 +108,6 @@
  ******************************************************************************
  */
 
-/*---------------------------------------------------------------------------*/
-/*!
- *
- * \brief This routine is called to generate WPA IE for
- *        associate request frame.
- *
- * \param[in]  prCurrentBss     The Selected BSS description
- *
- * \retval The append WPA IE length
- *
- * \note
- *      Called by: AIS module, Associate request
- */
-/*---------------------------------------------------------------------------*/
-void wapiGenerateWAPIIE(IN struct ADAPTER *prAdapter,
-			IN struct MSDU_INFO *prMsduInfo)
-{
-	uint8_t *pucBuffer;
-	struct CONNECTION_SETTINGS *prConnSettings;
-
-	ASSERT(prAdapter);
-	ASSERT(prMsduInfo);
-
-	if (!IS_BSS_INDEX_AIS(prAdapter, prMsduInfo->ucBssIndex))
-		return;
-
-	prConnSettings =
-		aisGetConnSettings(prAdapter, prMsduInfo->ucBssIndex);
-
-	pucBuffer =
-	    (uint8_t *) ((unsigned long)prMsduInfo->prPacket +
-			 (unsigned long)prMsduInfo->u2FrameLength);
-
-	/* ASSOC INFO IE ID: 68 :0x44 */
-	if (/* prConnSettings->fgWapiMode && */
-		prConnSettings->u2WapiAssocInfoIESz) {
-		kalMemCopy(pucBuffer,
-			   &prConnSettings->aucWapiAssocInfoIEs,
-			   prConnSettings->u2WapiAssocInfoIESz);
-		prMsduInfo->u2FrameLength +=
-		    prConnSettings->u2WapiAssocInfoIESz;
-	}
-
-}
-
 /*----------------------------------------------------------------------------*/
 /*!
  * \brief This routine is called to parse WAPI IE.

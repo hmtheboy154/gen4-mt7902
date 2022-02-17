@@ -108,7 +108,6 @@
 #define AIS_SCN_DONE_TIMEOUT_SEC            15 /* 15 for 2.4G + 5G */	/* 5 */
 #define AIS_SCN_REPORT_SEQ_NOT_SET          (0xFFFF)
 
-#define AIS_WAIT_OKC_PMKID_SEC              1000 /* unit: ms */
 /* Support AP Selection*/
 #define AIS_BLACKLIST_TIMEOUT               15 /* seconds */
 
@@ -268,8 +267,6 @@ struct AIS_FSM_INFO {
 	struct TIMER rScanDoneTimer;
 
 	struct TIMER rDeauthDoneTimer;
-
-	struct TIMER rWaitOkcPMKTimer;
 
 	struct TIMER rSecModeChangeTimer;
 

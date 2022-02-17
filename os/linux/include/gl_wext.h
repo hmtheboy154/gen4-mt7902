@@ -309,6 +309,7 @@ enum {
 #define IW_AUTH_KEY_MGMT_PSK_SHA256 8
 #endif
 #define IW_AUTH_ALG_FT			0x00000008
+#define IW_AUTH_ALG_SAE			0x00000010
 
 /*******************************************************************************
  *                            P U B L I C   D A T A
@@ -366,17 +367,10 @@ u_int8_t wextSrchDesiredHS20IE(IN uint8_t *pucIEStart,
 			       IN int32_t i4TotalIeLen,
 			       OUT uint8_t **ppucDesiredIE);
 
-u_int8_t wextSrchDesiredInterworkingIE(IN uint8_t
-				       *pucIEStart, IN int32_t i4TotalIeLen,
-				       OUT uint8_t **ppucDesiredIE);
-
 u_int8_t wextSrchDesiredAdvProtocolIE(IN uint8_t
 				      *pucIEStart, IN int32_t i4TotalIeLen,
 				      OUT uint8_t **ppucDesiredIE);
 
-u_int8_t wextSrchDesiredRoamingConsortiumIE(
-	IN uint8_t *pucIEStart, IN int32_t i4TotalIeLen,
-	OUT uint8_t **ppucDesiredIE);
 u_int8_t wextSrchDesiredOsenIE(IN uint8_t *pucIEStart,
 			       IN int32_t i4TotalIeLen,
 			       OUT uint8_t **ppucDesiredIE);
@@ -394,10 +388,6 @@ u_int8_t wextSrchDesiredWAPIIE(IN uint8_t *pucIEStart,
 			       IN int32_t i4TotalIeLen,
 			       OUT uint8_t **ppucDesiredIE);
 
-u_int8_t wextSrchOkcAndPMKID(IN uint8_t *pucIEStart,
-			     IN int32_t i4TotalIeLen,
-			     OUT uint8_t **ppucPMKID,
-			     OUT uint8_t *okc);
 /*******************************************************************************
  *                              F U N C T I O N S
  *******************************************************************************

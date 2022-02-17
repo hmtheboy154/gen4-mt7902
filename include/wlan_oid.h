@@ -412,6 +412,12 @@ struct PARAM_CONNECT {
 	uint8_t ucBssIdx;
 };
 
+struct PARAM_EXTERNAL_AUTH {
+	uint8_t bssid[PARAM_MAC_ADDR_LEN];
+	uint16_t status;
+	uint8_t ucBssIdx;
+};
+
 struct PARAM_OP_MODE {
 	enum ENUM_PARAM_OP_MODE eOpMode;
 	uint8_t ucBssIdx;
@@ -4202,14 +4208,6 @@ wlanoidSetWapiKey(IN struct ADAPTER *prAdapter,
 		  OUT uint32_t *pu4SetInfoLen);
 #endif
 
-#if CFG_SUPPORT_WPS2
-uint32_t
-wlanoidSetWSCAssocInfo(IN struct ADAPTER *prAdapter,
-		       IN void *pvSetBuffer,
-		       IN uint32_t u4SetBufferLen,
-		       OUT uint32_t *pu4SetInfoLen);
-#endif
-
 #if CFG_ENABLE_WAKEUP_ON_LAN
 uint32_t
 wlanoidSetAddWakeupPattern(IN struct ADAPTER *prAdapter,
@@ -4499,18 +4497,6 @@ wlanoidSetHS20Info(IN struct ADAPTER *prAdapter,
 		   IN void *pvSetBuffer,
 		   IN uint32_t u4SetBufferLen,
 		   OUT uint32_t *pu4SetInfoLen);
-
-uint32_t
-wlanoidSetInterworkingInfo(IN struct ADAPTER *prAdapter,
-			   IN void *pvSetBuffer,
-			   IN uint32_t u4SetBufferLen,
-			   OUT uint32_t *pu4SetInfoLen);
-
-uint32_t
-wlanoidSetRoamingConsortiumIEInfo(IN struct ADAPTER *prAdapter,
-				  IN void *pvSetBuffer,
-				  IN uint32_t u4SetBufferLen,
-				  OUT uint32_t *pu4SetInfoLen);
 
 uint32_t
 wlanoidSetHS20BssidPool(IN struct ADAPTER *prAdapter,
@@ -5043,5 +5029,10 @@ wlanoidLatchTSF(IN struct ADAPTER *prAdapter,
 		    IN void *pvQueryBuffer, IN uint32_t u4QueryBufferLen,
 		    OUT uint32_t *pu4QueryInfoLen);
 #endif
+uint32_t
+wlanoidExternalAuthDone(IN struct ADAPTER *prAdapter,
+			IN void *pvSetBuffer,
+			IN uint32_t u4SetBufferLen,
+			OUT uint32_t *pu4SetInfoLen);
 
 #endif /* _WLAN_OID_H */

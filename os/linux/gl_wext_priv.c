@@ -589,17 +589,6 @@ static struct WLAN_REQ_ENTRY arWlanOidReqTable[] = {
 	,
 #endif
 
-#if CFG_SUPPORT_WPS2
-	{
-		OID_802_11_WSC_ASSOC_INFO,
-		DISP_STRING("OID_802_11_WSC_ASSOC_INFO"),
-		FALSE, FALSE, ENUM_OID_DRIVER_CORE, 0,
-		NULL,
-		(PFN_OID_HANDLER_FUNC_REQ) wlanoidSetWSCAssocInfo
-	}
-	,
-#endif
-
 #if CFG_SUPPORT_LOWLATENCY_MODE
 	/* Note: we should put following code in order */
 	{
