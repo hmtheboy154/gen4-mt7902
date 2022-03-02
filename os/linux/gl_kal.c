@@ -6443,7 +6443,7 @@ void kalSchedScanStopped(IN struct GLUE_INFO *prGlueInfo,
 	 */
 	if (fgDriverTriggerd) {
 		DBGLOG(SCN, INFO, "start work queue to send event\n");
-		schedule_delayed_work(&sched_workq, 0);
+		queue_delayed_work(system_power_efficient_wq, &sched_workq, 0);
 		DBGLOG(SCN, INFO, "main_thread return from %s\n", __func__);
 	}
 }
