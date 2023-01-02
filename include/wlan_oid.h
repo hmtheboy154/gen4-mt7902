@@ -2762,10 +2762,10 @@ struct PARAM_SCAN_REQUEST_ADV {
 	uint8_t ucScnFuncMask;
 	uint8_t aucRandomMac[MAC_ADDR_LEN];
 	uint8_t ucBssIndex;
-	uint8_t aucBssid[CFG_SCAN_SSID_MAX_NUM][MAC_ADDR_LEN];
+	uint8_t aucBssid[CFG_SCAN_OOB_MAX_NUM][MAC_ADDR_LEN];
 	/* For 6G OOB discovery*/
-	uint8_t ucBssidMatchCh[CFG_SCAN_SSID_MAX_NUM];
-	uint8_t ucBssidMatchSsidInd[CFG_SCAN_SSID_MAX_NUM];
+	uint8_t ucBssidMatchCh[CFG_SCAN_OOB_MAX_NUM];
+	uint8_t ucBssidMatchSsidInd[CFG_SCAN_OOB_MAX_NUM];
 	u_int8_t fg6gOobRnrParseEn;
 };
 
