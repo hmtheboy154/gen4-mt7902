@@ -1621,7 +1621,7 @@ void scanParsingRnrElement(IN struct ADAPTER *prAdapter,
 
 		/* Check current NeighborAPInfo recorded BSSID count*/
 		if (prNeighborAPInfo) {
-			for (i = 0; i < CFG_SCAN_SSID_MAX_NUM; i++)
+			for (i = 0; i < CFG_SCAN_OOB_MAX_NUM; i++)
 				if (EQUAL_MAC_ADDR(prNeighborAPInfo->
 				  rScanRequest.aucBssid[i], aucNullAddr)) {
 					ucBssidNum = i;
@@ -1631,7 +1631,7 @@ void scanParsingRnrElement(IN struct ADAPTER *prAdapter,
 		/* If list is empty or tail NeighborAPInfo BssidNum = MAX,
 		*  generate a new NeighborAPInfo.
 		*/
-		if (prNeighborAPInfo == NULL || i == CFG_SCAN_SSID_MAX_NUM) {
+		if (prNeighborAPInfo == NULL || i == CFG_SCAN_OOB_MAX_NUM) {
 			prNeighborAPInfo =
 			    (struct NEIGHBOR_AP_INFO *)cnmMemAlloc(prAdapter,
 			    RAM_TYPE_BUF, sizeof(struct NEIGHBOR_AP_INFO));
@@ -1671,11 +1671,11 @@ void scanParsingRnrElement(IN struct ADAPTER *prAdapter,
 			/* IE used to save short SSID list*/
 			prScanRequest->pucIE = prNeighborAPInfo->aucScanIEBuf;
 
-			/* Init value = CFG_SCAN_SSID_MAX_NUM, if init value = 0
+			/* Init value = CFG_SCAN_OOB_MAX_NUM, if init value = 0
 			*  will let FW confuse to match SSID ind 0.
 			*/
 			kalMemSet(prScanRequest->ucBssidMatchSsidInd,
-				CFG_SCAN_SSID_MAX_NUM,
+				CFG_SCAN_OOB_MAX_NUM,
 				sizeof(prScanRequest->ucBssidMatchSsidInd));
 
 			if (prScanParam->ucSSIDType & SCAN_REQ_SSID_SPECIFIED){
@@ -1768,7 +1768,7 @@ void scanParsingRnrElement(IN struct ADAPTER *prAdapter,
 			if (!ucScanEnable)
 				continue;
 
-			if (ucBssidNum < CFG_SCAN_SSID_MAX_NUM) {
+			if (ucBssidNum < CFG_SCAN_OOB_MAX_NUM) {
 				if (prScanRequest->ucScnFuncMask &
 					ENUM_SCN_USE_PADDING_AS_BSSID) {
 					kalMemCopy(prScanRequest->aucBssid[ucBssidNum],
@@ -1815,7 +1815,7 @@ void scanParsingRnrElement(IN struct ADAPTER *prAdapter,
 			if (ucBssParamOffset != 0 &&
 				(prScanRequest->ucScnFuncMask &
 				 ENUM_SCN_USE_PADDING_AS_BSSID) &&
-				prScanRequest->u4SsidNum < CFG_SCAN_SSID_MAX_NUM
+				prScanRequest->u4SsidNum < CFG_SCAN_OOB_MAX_NUM
 				&& (prNeighborAPInfoField->aucTbttInfoSet[j +
 				ucBssParamOffset] &
 				TBTT_INFO_BSS_PARAM_SAME_SSID))

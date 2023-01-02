@@ -272,7 +272,7 @@ void scnSendScanReqV2(IN struct ADAPTER *prAdapter)
 	if (prScanParam->ucScnFuncMask & ENUM_SCN_USE_PADDING_AS_BSSID) {
 		kalMemCopy(prCmdScanReq->aucExtBSSID,
 			&prScanParam->aucBSSID[0][0],
-			SCN_SSID_MAX_NUM*MAC_ADDR_LEN);
+			CFG_SCAN_OOB_MAX_NUM * MAC_ADDR_LEN);
 		prCmdScanReq->ucScnFuncMask |= ENUM_SCN_USE_PADDING_AS_BSSID;
 		DBGLOG(SCN, INFO,
 			"[56_2] Bssid! "MACSTR"\n",
@@ -292,9 +292,9 @@ void scnSendScanReqV2(IN struct ADAPTER *prAdapter)
 	prCmdScanReq->auVersion[0] = 1;
 	/* for 6G OOB scan */
 	kalMemCopy(prCmdScanReq->ucBssidMatchCh, prScanParam->ucBssidMatchCh,
-			CFG_SCAN_SSID_MAX_NUM);
+			CFG_SCAN_OOB_MAX_NUM);
 	kalMemCopy(prCmdScanReq->ucBssidMatchSsidInd,
-		prScanParam->ucBssidMatchSsidInd, CFG_SCAN_SSID_MAX_NUM);
+		prScanParam->ucBssidMatchSsidInd, CFG_SCAN_OOB_MAX_NUM);
 
 	if (kalIsValidMacAddr(prScanParam->aucRandomMac)) {
 		prCmdScanReq->ucScnFuncMask |= (ENUM_SCN_RANDOM_MAC_EN |
@@ -672,9 +672,9 @@ void scnFsmHandleScanMsgV2(IN struct ADAPTER *prAdapter,
 		MAC_ADDR_LEN);
 	/* for 6G OOB scan */
 	kalMemCopy(prScanParam->ucBssidMatchCh, prScanReqMsg->ucBssidMatchCh,
-			CFG_SCAN_SSID_MAX_NUM);
+			CFG_SCAN_OOB_MAX_NUM);
 	kalMemCopy(prScanParam->ucBssidMatchSsidInd,
-		prScanReqMsg->ucBssidMatchSsidInd, CFG_SCAN_SSID_MAX_NUM);
+		prScanReqMsg->ucBssidMatchSsidInd, CFG_SCAN_OOB_MAX_NUM);
 	prScanParam->fg6gOobRnrParseEn = prScanReqMsg->fg6gOobRnrParseEn;
 
 	if ((prScanParam->ucSSIDType & SCAN_REQ_SSID_SPECIFIED_ONLY) &&
@@ -739,7 +739,7 @@ void scnFsmHandleScanMsgV2(IN struct ADAPTER *prAdapter,
 
 	kalMemCopy(&prScanParam->aucBSSID[0][0],
 		&prScanReqMsg->aucExtBssid[0][0],
-		SCN_SSID_MAX_NUM*MAC_ADDR_LEN);
+		CFG_SCAN_OOB_MAX_NUM * MAC_ADDR_LEN);
 }
 
 /*----------------------------------------------------------------------------*/

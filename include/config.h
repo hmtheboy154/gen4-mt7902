@@ -793,6 +793,7 @@
 #define SCAN_CMD_EXT_SSID_NUM                   (6)
 #define SCAN_CMD_EXT_CHNL_NUM                   (32)
 #endif
+#define CFG_SCAN_OOB_MAX_NUM			(4)
 #define CFG_SCAN_SSID_MAX_NUM (SCAN_CMD_SSID_NUM+SCAN_CMD_EXT_SSID_NUM)
 
 #if (CFG_SUPPORT_WIFI_6G == 1)

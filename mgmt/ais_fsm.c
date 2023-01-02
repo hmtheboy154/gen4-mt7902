@@ -1953,7 +1953,7 @@ void aisFsmSteps(IN struct ADAPTER *prAdapter,
 				}
 				kalMemCopy(prScanReqMsg->aucExtBssid,
 					   prScanRequest->aucBssid,
-					   SCN_SSID_MAX_NUM*MAC_ADDR_LEN);
+					   CFG_SCAN_OOB_MAX_NUM * MAC_ADDR_LEN);
 				kalMemCopy(prScanReqMsg->aucRandomMac,
 					   prScanRequest->aucRandomMac,
 					   MAC_ADDR_LEN);
@@ -1990,10 +1990,10 @@ void aisFsmSteps(IN struct ADAPTER *prAdapter,
 			/* for 6G OOB scan */
 			kalMemCopy(prScanReqMsg->ucBssidMatchCh,
 				prScanRequest->ucBssidMatchCh,
-				CFG_SCAN_SSID_MAX_NUM);
+				CFG_SCAN_OOB_MAX_NUM);
 			kalMemCopy(prScanReqMsg->ucBssidMatchSsidInd,
 				prScanRequest->ucBssidMatchSsidInd,
-				CFG_SCAN_SSID_MAX_NUM);
+				CFG_SCAN_OOB_MAX_NUM);
 
 			prScanReqMsg->fg6gOobRnrParseEn =
 				prScanRequest->fg6gOobRnrParseEn;
