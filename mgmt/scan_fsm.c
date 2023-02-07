@@ -271,7 +271,7 @@ void scnSendScanReqV2(IN struct ADAPTER *prAdapter)
 	/* Modify channelList number from 32 to 54 */
 	if (prScanParam->ucScnFuncMask & ENUM_SCN_USE_PADDING_AS_BSSID) {
 		kalMemCopy(prCmdScanReq->aucExtBSSID,
-			&prScanParam->aucBSSID[0][0],
+			prScanParam->aucBSSID,
 			CFG_SCAN_OOB_MAX_NUM * MAC_ADDR_LEN);
 		prCmdScanReq->ucScnFuncMask |= ENUM_SCN_USE_PADDING_AS_BSSID;
 		DBGLOG(SCN, INFO,
@@ -737,8 +737,8 @@ void scnFsmHandleScanMsgV2(IN struct ADAPTER *prAdapter,
 
 	prScanParam->fgIsScanV2 = TRUE;
 
-	kalMemCopy(&prScanParam->aucBSSID[0][0],
-		&prScanReqMsg->aucExtBssid[0][0],
+	kalMemCopy(prScanParam->aucBSSID,
+		prScanReqMsg->aucExtBssid,
 		CFG_SCAN_OOB_MAX_NUM * MAC_ADDR_LEN);
 }
 
