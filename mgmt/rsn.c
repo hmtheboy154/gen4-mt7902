@@ -1895,7 +1895,15 @@ void rsnGenerateRSNIE(IN struct ADAPTER *prAdapter,
 			} else  {
 				entry = rsnSearchPmkidEntry(prAdapter,
 					prStaRec->aucMacAddr, ucBssIndex);
+				if (prStaRec->ucAuthAlgNum ==
+						AUTH_ALGORITHM_NUM_SAE) {
+					DBGLOG(RSN, INFO,
+						"Do not apply PMKID in RSNIE if auth type is SAE");
+					entry = NULL;
+				}
 			}
+
+
 			/* Fill PMKID Count and List field */
 			if (entry) {
 				uint8_t *pmk = entry->rBssidInfo.arPMKID;
