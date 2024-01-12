@@ -4644,8 +4644,10 @@ wext_indicate_wext_event(IN struct GLUE_INFO *prGlueInfo,
 	}
 
 	/* Send event to user space */
-	wireless_send_event(prDevHandler, u4Cmd, &wrqu,
-			    pucExtraInfo);
+	if (prGlueInfo->u4ReadyFlag != 0) {
+		wireless_send_event(prDevHandler, u4Cmd, &wrqu,
+ 			    pucExtraInfo);
+	}
 
 skip_indicate_event:
 	return;
