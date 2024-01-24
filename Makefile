@@ -96,6 +96,7 @@ ccflags-y += -DCFG_SUPPORT_TSF_USING_BOOTTIME=1
 ccflags-y += -DARP_MONITER_ENABLE=1
 ccflags-y += -Werror -Wno-incompatible-function-pointer-types
 ccflags-y += -Wno-missing-prototypes -Wno-missing-declarations -Wno-attribute-warning -Wno-empty-body
+ccflags-y += -Wno-unused-variable -Wno-unused-function
 #ccflags-y:=$(filter-out -U$(WLAN_CHIP_ID),$(ccflags-y))
 #ccflags-y += -DLINUX -D$(WLAN_CHIP_ID)
 #workaround: also needed for none LINUX system
