@@ -335,7 +335,7 @@
 /* Enable Android wake_lock operations */
 #if defined(CONFIG_ANDROID)
 #ifndef CFG_ENABLE_WAKE_LOCK
-#define CFG_ENABLE_WAKE_LOCK	1
+#define CFG_ENABLE_WAKE_LOCK	0
 #endif
 #else
 #define CFG_ENABLE_WAKE_LOCK	0
