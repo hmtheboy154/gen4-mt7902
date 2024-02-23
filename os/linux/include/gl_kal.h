@@ -1909,8 +1909,8 @@ int32_t kalGetFwFlavor(uint8_t *flavor);
 #if (CFG_SUPPORT_PERMON == 1)
 int32_t kalPerMonSetForceEnableFlag(uint8_t uFlag);
 #endif
-int32_t kalFbNotifierReg(IN struct GLUE_INFO *prGlueInfo);
-void kalFbNotifierUnReg(void);
+int32_t kalNotifierReg(IN struct GLUE_INFO *prGlueInfo);
+void kalNotifierUnReg(void);
 
 #if KERNEL_VERSION(3, 0, 0) <= LINUX_VERSION_CODE
 /* since: 0b5c9db1b11d3175bb42b80663a9f072f801edf5 */
