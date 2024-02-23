@@ -6659,7 +6659,7 @@ static int initWlan(void)
 #if (CFG_CHIP_RESET_SUPPORT)
 	glResetInit(prGlueInfo);
 #endif
-	kalFbNotifierReg((struct GLUE_INFO *) wiphy_priv(
+	kalNotifierReg((struct GLUE_INFO *) wiphy_priv(
 				 wlanGetWiphy()));
 	wlanRegisterNetdevNotifier();
 
@@ -6758,8 +6758,7 @@ static void exitWlan(void)
 		RST_MODULE_STATE_KO_RMMOD, NULL);
 #endif
 
-	kalFbNotifierUnReg();
-
+	kalNotifierUnReg();
 	wlanUnregisterNetdevNotifier();
 
 #if CFG_CHIP_RESET_SUPPORT
