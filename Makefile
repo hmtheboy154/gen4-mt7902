@@ -784,11 +784,7 @@ ccflags-y += -DCFG_SUPPORT_UNIFIED_COMMAND
 endif
 
 # Debug Config for userdebug and eng load
-ifneq ($(filter userdebug eng, $(TARGET_BUILD_VARIANT)),)
-    ccflags-y += -DBUILD_QA_DBG=1
-else
-    ccflags-y += -DBUILD_QA_DBG=0
-endif
+ccflags-y += -DBUILD_QA_DBG=0
 
 # For Android Vendor Hal
 # kernel >= 5.4: SHALL use 0, which means you must use the ALPS Android S vendor hal or patch your old hal with CL:5188442
