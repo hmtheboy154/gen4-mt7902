@@ -3269,7 +3269,7 @@ static int32_t kalThreadSchedRetrieve(struct task_struct *pThread,
 	memcpy(&se, &pThread->se, sizeof(struct sched_entity));
 	kalGetLocalTime(&sec, &usec);
 
-#if KERNEL_VERSION(5, 16, 0) <= LINUX_VERSION_CODE
+#if KERNEL_VERSION(5, 15, 111) <= LINUX_VERSION_CODE
 	stats = &pThread->stats;
 #else
 	stats = &pThread->se.statistics;
