@@ -614,7 +614,7 @@ void mt7902ConstructFirmwarePrio(struct GLUE_INFO *prGlueInfo,
 			if (prChipInfo->fgFwdlTestMode){
 				/* Type test mode. WIFI_RAM_CODE_MTxxxx_xt.bin */
 				ret = snprintf(*(apucName + (*pucNameIdx)),
-					CFG_FW_NAME_MAX_LEN, "%s%x_%xt.bin",
+					CFG_FW_NAME_MAX_LEN, "mediatek/mt7902/%s%x_%xt.bin",
 					apucNameTable[sub_idx], chip_id, u4FlavorVer);
 				if (ret < 0)
 					DBGLOG(INIT, ERROR,
@@ -626,7 +626,7 @@ void mt7902ConstructFirmwarePrio(struct GLUE_INFO *prGlueInfo,
 #endif
 			/* Type 1. WIFI_RAM_CODE_MTxxxx_x.bin */
 			ret = snprintf(*(apucName + (*pucNameIdx)),
-				CFG_FW_NAME_MAX_LEN, "%s%x_%x.bin",
+				CFG_FW_NAME_MAX_LEN, "mediatek/mt7902/%s%x_%x.bin",
 				apucNameTable[sub_idx], chip_id, u4FlavorVer);
 			if (ret < 0)
 				DBGLOG(INIT, ERROR,
@@ -644,7 +644,7 @@ void mt7902ConstructFirmwarePrio(struct GLUE_INFO *prGlueInfo,
 
 			/* Type 3. WIFI_RAM_CODE_MTxxxx.bin */
 			ret = snprintf(*(apucName + (*pucNameIdx)),
-				CFG_FW_NAME_MAX_LEN, "%s%x.bin",
+				CFG_FW_NAME_MAX_LEN, "mediatek/mt7902/%s%x.bin",
 				apucNameTable[sub_idx], chip_id);
 			if (ret < 0)
 				DBGLOG(INIT, ERROR,
@@ -693,7 +693,7 @@ void mt7902ConstructPatchName(struct GLUE_INFO *prGlueInfo,
 	}
 
 	s4Result = snprintf(apucName[(*pucNameIdx)],
-		CFG_FW_NAME_MAX_LEN, "WIFI_MT%x_patch_mcu_%x_%x_hdr.bin",
+		CFG_FW_NAME_MAX_LEN, "mediatek/mt7902/WIFI_MT%x_patch_mcu_%x_%x_hdr.bin",
 		prChipInfo->chip_id, u4FlavorVer,
 		mt7961GetFwVer(prAdapter));
 
@@ -1259,7 +1259,7 @@ void mt7902ConstructBtPatchName(struct GLUE_INFO *prGlueInfo,
 	}
 
 	s4Result = snprintf(apucName[(*pucNameIdx)],
-		CFG_FW_NAME_MAX_LEN, "BT_RAM_CODE_MT%x_%x_%x_hdr.bin",
+		CFG_FW_NAME_MAX_LEN, "mediatek/mt7902/BT_RAM_CODE_MT%x_%x_%x_hdr.bin",
 		prChipInfo->chip_id, u4FlavorVer,
 		mt7961GetFwVer(prAdapter));
 	if (s4Result < 0)
@@ -1313,7 +1313,7 @@ void mt7902ConstructZbPatchName(struct GLUE_INFO *prGlueInfo,
 	}
 
 	s4Result = snprintf(apucName[(*pucNameIdx)],
-		CFG_FW_NAME_MAX_LEN, "ZB_RAM_CODE_MT%x_%x_%x_hdr.bin",
+		CFG_FW_NAME_MAX_LEN, "mediatek/mt7902/ZB_RAM_CODE_MT%x_%x_%x_hdr.bin",
 		prChipInfo->chip_id, u4FlavorVer,
 		mt7961GetFwVer(prAdapter));
 	if (s4Result < 0)
@@ -1354,7 +1354,7 @@ uint32_t mt7902ConstructBufferBinFileName(struct ADAPTER *prAdapter,
 		return WLAN_STATUS_FAILURE;
 	}
 
-	s4Result = snprintf(aucEeprom, 32, "EEPROM_MT%x_%x.bin",
+	s4Result = snprintf(aucEeprom, 32, "mediatek/mt7902/EEPROM_MT%x_%x.bin",
 		 prChipInfo->chip_id, u4FlavorVer);
 
 	if (s4Result < 0) {

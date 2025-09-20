@@ -8,6 +8,8 @@ PATCHLEVEL ?= $(shell echo $(KVER) | cut -d. -f2)
 MODULE_NAME=mt7902
 MTK_ANDROID_WMT=n
 MTK_ANDROID_EMI=n
+## Change config file location
+ccflags-y += -DCFG_WIFI_CFG_FN=\"mediatek/mt7902/wifi.cfg\"
 
 # ---------------------------------------------------
 # Kbuild option
