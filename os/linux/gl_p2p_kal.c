@@ -1668,7 +1668,11 @@ void kalP2PRddDetectUpdate(IN struct GLUE_INFO *prGlueInfo,
 		/* cac start disable for next cac slot
 		 * if enable in dfs channel
 		 */
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
+		prGlueInfo->prP2PInfo[ucRoleIndex]->prWdev->links[0].cac_started = FALSE;
+#else
 		prGlueInfo->prP2PInfo[ucRoleIndex]->prWdev->cac_started = FALSE;
+#endif
 		DBGLOG(INIT, INFO,
 			"kalP2PRddDetectUpdate: Update to OS\n");
 		cfg80211_radar_event(
@@ -1705,10 +1709,17 @@ void kalP2PCacFinishedUpdate(IN struct GLUE_INFO *prGlueInfo,
 
 		DBGLOG(INIT, INFO, "kalP2PCacFinishedUpdate: Update to OS\n");
 #if KERNEL_VERSION(3, 14, 0) <= CFG80211_VERSION_CODE
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 12, 0)
+		cfg80211_cac_event(
+			prGlueInfo->prP2PInfo[ucRoleIndex]->prDevHandler,
+			prGlueInfo->prP2PInfo[ucRoleIndex]->chandef,
+			NL80211_RADAR_CAC_FINISHED, GFP_KERNEL, 0);
+#else
 		cfg80211_cac_event(
 			prGlueInfo->prP2PInfo[ucRoleIndex]->prDevHandler,
 			prGlueInfo->prP2PInfo[ucRoleIndex]->chandef,
 			NL80211_RADAR_CAC_FINISHED, GFP_KERNEL);
+#endif
 #else
 		cfg80211_cac_event(
 			prGlueInfo->prP2PInfo[ucRoleIndex]->prDevHandler,

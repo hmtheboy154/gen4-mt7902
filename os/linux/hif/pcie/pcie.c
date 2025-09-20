@@ -730,7 +730,11 @@ void glClearHifInfo(struct GLUE_INFO *prGlueInfo)
 	struct TX_CMD_REQ *prTxCmdReq;
 	struct TX_DATA_REQ *prTxDataReq;
 
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+	timer_delete_sync(&prHifInfo->rSerTimer);
+#else
 	del_timer_sync(&prHifInfo->rSerTimer);
+#endif
 
 	halUninitMsduTokenInfo(prGlueInfo->prAdapter);
 	halWpdmaFreeRing(prGlueInfo);
@@ -783,7 +787,11 @@ u_int8_t glBusInit(void *pvData)
 
 	pdev = (struct pci_dev *)pvData;
 
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(g_u4DmaMask));
+#else
 	ret = pci_set_dma_mask(pdev, DMA_BIT_MASK(g_u4DmaMask));
+#endif
 	if (ret != 0) {
 		DBGLOG(INIT, INFO, "set DMA mask failed!errno=%d\n", ret);
 		return FALSE;

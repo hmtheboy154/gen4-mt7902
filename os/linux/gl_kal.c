@@ -76,6 +76,9 @@
 #include "gl_kal.h"
 #include "gl_wext.h"
 #include "precomp.h"
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+#include <net/gro.h>
+#endif
 
 #if CFG_SUPPORT_AGPS_ASSIST
 #include <net/netlink.h>
@@ -1279,10 +1282,14 @@ uint32_t kalRxIndicateOnePkt(IN struct GLUE_INFO
 		return WLAN_STATUS_SUCCESS;
 	}
 #endif
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+	netif_rx(prSkb);
+#else
 	if (!in_interrupt())
 		netif_rx_ni(prSkb);
 	else
 		netif_rx(prSkb);
+#endif
 
 	return WLAN_STATUS_SUCCESS;
 }
@@ -5077,7 +5084,11 @@ u_int8_t kalSetTimer(IN struct GLUE_INFO *prGlueInfo,
 		mod_timer(&prGlueInfo->tickfn,
 			  jiffies + u4Interval * HZ / MSEC_PER_SEC);
 	} else {
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+		timer_delete_sync(&(prGlueInfo->tickfn));
+#else
 		del_timer_sync(&(prGlueInfo->tickfn));
+#endif
 
 		prGlueInfo->tickfn.expires = jiffies + u4Interval * HZ /
 					     MSEC_PER_SEC;
@@ -5103,7 +5114,11 @@ u_int8_t kalCancelTimer(IN struct GLUE_INFO *prGlueInfo)
 
 	clear_bit(GLUE_FLAG_TIMEOUT_BIT, &prGlueInfo->ulFlag);
 
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+	if (timer_delete_sync(&(prGlueInfo->tickfn)) >= 0)
+#else
 	if (del_timer_sync(&(prGlueInfo->tickfn)) >= 0)
+#endif
 		return TRUE;
 	else
 		return FALSE;
@@ -5225,7 +5240,11 @@ void kalTimeoutHandler(unsigned long arg)
 
 #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
 	struct GLUE_INFO *prGlueInfo =
+#if KERNEL_VERSION(6, 16, 0) <= LINUX_VERSION_CODE
+		timer_container_of(prGlueInfo, timer, tickfn);
+#else
 		from_timer(prGlueInfo, timer, tickfn);
+#endif
 #else
 	struct GLUE_INFO *prGlueInfo = (struct GLUE_INFO *) arg;
 #endif
@@ -6582,8 +6601,25 @@ void kalIndicateRxAssocToUpperLayer(struct net_device *prDevHandler,
 
 #if (KERNEL_VERSION(5, 1, 0) <= CFG80211_VERSION_CODE)
 	/* [TODO] Set uapsd_queues/req_ies/req_ies_len properly */
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+	struct cfg80211_rx_assoc_resp_data resp = {
+#else
+	struct cfg80211_rx_assoc_resp resp = {
+#endif
+		.uapsd_queues = -1,
+	};
+	resp.links[0].bss = bss;
+	resp.buf = prAssocRspFrame;
+	resp.len = u2FrameLen;
+	resp.req_ies = 0;
+	resp.req_ies_len = 0;
+	resp.uapsd_queues = 0;
+	cfg80211_rx_assoc_resp(prDevHandler, &resp);
+#else
 	cfg80211_rx_assoc_resp(prDevHandler, bss, prAssocRspFrame,
 		u2FrameLen, 0, NULL, 0);
+#endif
 #elif (KERNEL_VERSION(3, 18, 0) <= CFG80211_VERSION_CODE)
 	/* [TODO] Set uapsd_queues field to zero first,fill it if needed*/
 	cfg80211_rx_assoc_resp(prDevHandler, bss, prAssocRspFrame, u2FrameLen, 0);
@@ -6731,7 +6767,11 @@ void kalAcquireWDevMutex(IN struct net_device *pDev)
 	ASSERT(pDev);
 
 	DBGLOG(INIT, TEMP, "WDEV_LOCK Try to acquire\n");
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+	mutex_lock(&(pDev->ieee80211_ptr)->wiphy->mtx);
+#else
 	mutex_lock(&(pDev->ieee80211_ptr)->mtx);
+#endif
 	DBGLOG(INIT, TEMP, "WDEV_LOCK Acquired\n");
 }				/* end of kalAcquireWDevMutex() */
 
@@ -6749,7 +6789,11 @@ void kalReleaseWDevMutex(IN struct net_device *pDev)
 {
 	ASSERT(pDev);
 
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+	mutex_unlock(&(pDev->ieee80211_ptr)->wiphy->mtx);
+#else
 	mutex_unlock(&(pDev->ieee80211_ptr)->mtx);
+#endif
 	DBGLOG(INIT, TEMP, "WDEV_UNLOCK\n");
 }				/* end of kalReleaseWDevMutex() */
 
@@ -6899,10 +6943,27 @@ static void kalProcessCfg80211RxPkt(struct PARAM_CFG80211_REQ *prCfg80211Req)
 	case MAC_FRAME_ASSOC_RSP:
 #if (KERNEL_VERSION(5, 1, 0) <= CFG80211_VERSION_CODE)
 		/* [TODO] Set uapsd_queues/req_ies/req_ies_len properly */
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+		struct cfg80211_rx_assoc_resp_data resp = {
+#else
+		struct cfg80211_rx_assoc_resp resp = {
+#endif
+			.uapsd_queues = -1,
+		};
+		resp.links[0].bss = prCfg80211Req->bss;
+		resp.buf = (const u8 *)prCfg80211Req->prFrame;
+		resp.len = prCfg80211Req->frameLen;
+		resp.req_ies = 0;
+		resp.req_ies_len = 0;
+		resp.uapsd_queues = 0;
+		cfg80211_rx_assoc_resp(prCfg80211Req->prDevHandler, &resp);
+#else
 		cfg80211_rx_assoc_resp(prCfg80211Req->prDevHandler,
 			prCfg80211Req->bss,
 			(const u8 *)prCfg80211Req->prFrame,
 			prCfg80211Req->frameLen, 0, NULL, 0);
+#endif
 #elif (KERNEL_VERSION(3, 18, 0) <= CFG80211_VERSION_CODE)
 		cfg80211_rx_assoc_resp(prCfg80211Req->prDevHandler, prCfg80211Req->bss,
 			(const u8 *)prCfg80211Req->prFrame, prCfg80211Req->frameLen, 0);
@@ -9373,6 +9434,12 @@ static int wlan_fb_notifier_callback(struct notifier_block
 	struct GLUE_INFO *prGlueInfo = (struct GLUE_INFO *)
 				       wlan_fb_notifier_priv_data;
 
+//Temporary hack for k6.16+
+//TODO: replace if found better solution
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 16, 0)
+#define FB_EVENT_BLANK                  0x09
+#endif
+
 	/* If we aren't interested in this event, skip it immediately ... */
 	if ((event != FB_EVENT_BLANK) || !prGlueInfo)
 		return 0;
@@ -10111,8 +10178,13 @@ uint8_t kalNapiInit(struct net_device *prDev)
 		prGlueInfo->prAdapter->rWifiVar.ucGROFlushTimeout
 		* NSEC_PER_MSEC;
 #endif /* KERNEL_VERSION(3, 19, 0) */
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+	netif_napi_add(prNetDevPrivate->napi.dev,
+		&prNetDevPrivate->napi, kalNapiPoll);
+#else
 	netif_napi_add(prNetDevPrivate->napi.dev,
 		&prNetDevPrivate->napi, kalNapiPoll, NAPI_POLL_WEIGHT);
+#endif
 	skb_queue_head_init(&prNetDevPrivate->rRxNapiSkbQ);
 	DBGLOG(INIT, INFO,
 		"GRO interface added successfully:%s\n", prDev->name);

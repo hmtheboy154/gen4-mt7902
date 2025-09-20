@@ -95,6 +95,7 @@ ccflags-y += -DCFG_SUPPORT_AGPS_ASSIST=0
 ccflags-y += -DCFG_SUPPORT_TSF_USING_BOOTTIME=1
 ccflags-y += -DARP_MONITER_ENABLE=1
 ccflags-y += -Werror -Wno-incompatible-function-pointer-types
+ccflags-y += -Wno-missing-prototypes -Wno-missing-declarations -Wno-attribute-warning -Wno-empty-body
 #ccflags-y:=$(filter-out -U$(WLAN_CHIP_ID),$(ccflags-y))
 #ccflags-y += -DLINUX -D$(WLAN_CHIP_ID)
 #workaround: also needed for none LINUX system
@@ -335,6 +336,11 @@ ccflags-y += -DCFG_SUPPORT_HE_ER=1
 ccflags-y += -DCFG_SUPPORT_DBDC=0
 ccflags-y += -DCFG_SUPPORT_BW160=1
 ccflags-y += -DCFG_WIFI_TX_ETH_CHK_EMPTY_PAYLOAD=1
+
+##For k6.1+
+ifeq ($(call kver_ge,6,1),1)
+CONFIG_MTK_ADVANCED_80211_MLO=y
+endif
 endif
 
 ifneq ($(findstring MT7933,$(MTK_COMBO_CHIP)),)

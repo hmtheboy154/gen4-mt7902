@@ -2246,8 +2246,16 @@ int mtk_cfg80211_deauth(struct wiphy *wiphy,
 		DBGLOG(REQ, INFO, "assoc timeout notify\n");
 		/* ops caller have already hold the mutex. */
 #if (KERNEL_VERSION(3, 11, 0) <= CFG80211_VERSION_CODE)
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
+		struct cfg80211_assoc_failure data = {
+			.bss[0] = prConnSettings->bss,
+			.timeout = true,
+		};
+		cfg80211_assoc_failure(ndev, &data);
+#else
 		cfg80211_assoc_timeout(ndev,
 			prConnSettings->bss);
+#endif
 #else
 		cfg80211_send_assoc_timeout(ndev,
 			prGlueInfo->prAdapter->rWifiVar.
@@ -5163,7 +5171,7 @@ int mtk_cfg80211_testmode_get_scan_done(IN struct wiphy
 int
 mtk_cfg80211_change_station(struct wiphy *wiphy,
 			    struct net_device *ndev, const u8 *mac,
-			    struct station_parameters *params)
+			    struct station_parameters *params_main)
 {
 
 	/* return 0; */
@@ -5176,6 +5184,14 @@ mtk_cfg80211_change_station(struct wiphy *wiphy,
 	struct ADAPTER *prAdapter;
 	struct BSS_INFO *prBssInfo;
 	uint8_t ucBssIndex = 0;
+	//Copy from gen4m
+#if (CFG_ADVANCED_80211_MLO == 1) || \
+	KERNEL_VERSION(6, 0, 0) <= CFG80211_VERSION_CODE
+	struct link_station_parameters *params =
+			&(params_main->link_sta_params);
+#else
+	struct station_parameters *params = params_main;
+#endif
 
 	prGlueInfo = (struct GLUE_INFO *) wiphy_priv(wiphy);
 	ASSERT(prGlueInfo);
@@ -5220,14 +5236,14 @@ mtk_cfg80211_change_station(struct wiphy *wiphy,
 	rCmdUpdate.UapsdBitmap = 0x0F;	/*params->uapsd_queues; */
 	rCmdUpdate.UapsdMaxSp = 0;	/*params->max_sp; */
 
-	rCmdUpdate.u2Capability = params->capability;
+	rCmdUpdate.u2Capability = params_main->capability;
 
-	if (params->ext_capab != NULL) {
+	if (params_main->ext_capab != NULL) {
 
-		u4Temp = params->ext_capab_len;
+		u4Temp = params_main->ext_capab_len;
 		if (u4Temp > CMD_PEER_UPDATE_EXT_CAP_MAXLEN)
 			u4Temp = CMD_PEER_UPDATE_EXT_CAP_MAXLEN;
-		kalMemCopy(rCmdUpdate.aucExtCap, params->ext_capab, u4Temp);
+		kalMemCopy(rCmdUpdate.aucExtCap, params_main->ext_capab, u4Temp);
 		rCmdUpdate.u2ExtCapLen = u4Temp;
 	}
 
@@ -5261,7 +5277,7 @@ mtk_cfg80211_change_station(struct wiphy *wiphy,
 
 	/* update a TDLS peer record */
 	/* sanity check */
-	if ((params->sta_flags_set & BIT(
+	if ((params_main->sta_flags_set & BIT(
 		     NL80211_STA_FLAG_TDLS_PEER)))
 		rCmdUpdate.eStaType = STA_TYPE_DLS_PEER;
 	rCmdUpdate.ucBssIdx = ucBssIndex;
@@ -6497,7 +6513,11 @@ int mtk_uninit_ap_role(struct GLUE_INFO *prGlueInfo,
 int mtk_cfg_start_radar_detection(struct wiphy *wiphy,
 				  struct net_device *dev,
 				  struct cfg80211_chan_def *chandef,
-				  unsigned int cac_time_ms)
+				  unsigned int cac_time_ms
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+                  ,int link_id
+#endif
+)
 {
 	struct GLUE_INFO *prGlueInfo = NULL;
 
@@ -6803,7 +6823,11 @@ int mtk_cfg_change_iface(struct wiphy *wiphy,
 }
 
 int mtk_cfg_add_key(struct wiphy *wiphy,
-		    struct net_device *ndev, u8 key_index,
+		    struct net_device *ndev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+                     int link_id,
+#endif
+					 u8 key_index,
 		    bool pairwise, const u8 *mac_addr,
 		    struct key_params *params)
 {
@@ -6829,7 +6853,11 @@ int mtk_cfg_add_key(struct wiphy *wiphy,
 }
 
 int mtk_cfg_get_key(struct wiphy *wiphy,
-		    struct net_device *ndev, u8 key_index,
+		    struct net_device *ndev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+                     int link_id,
+#endif
+					 u8 key_index,
 		    bool pairwise, const u8 *mac_addr, void *cookie,
 		    void (*callback)(void *cookie, struct key_params *))
 {
@@ -6854,7 +6882,11 @@ int mtk_cfg_get_key(struct wiphy *wiphy,
 }
 
 int mtk_cfg_del_key(struct wiphy *wiphy,
-		    struct net_device *ndev, u8 key_index,
+		    struct net_device *ndev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+                     int link_id,
+#endif
+					 u8 key_index,
 		    bool pairwise, const u8 *mac_addr)
 {
 	struct GLUE_INFO *prGlueInfo = NULL;
@@ -6879,6 +6911,9 @@ int mtk_cfg_del_key(struct wiphy *wiphy,
 
 int mtk_cfg_set_default_key(struct wiphy *wiphy,
 			    struct net_device *ndev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+	             int link_id,
+#endif
 			    u8 key_index, bool unicast, bool multicast)
 {
 	struct GLUE_INFO *prGlueInfo = NULL;
@@ -6902,7 +6937,11 @@ int mtk_cfg_set_default_key(struct wiphy *wiphy,
 }
 
 int mtk_cfg_set_default_mgmt_key(struct wiphy *wiphy,
-		struct net_device *ndev, u8 key_index)
+		struct net_device *ndev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+		             int link_id,
+#endif
+					 u8 key_index)
 {
 	struct GLUE_INFO *prGlueInfo = NULL;
 
@@ -7042,7 +7081,11 @@ int mtk_cfg_tdls_oper(struct wiphy *wiphy,
 #if KERNEL_VERSION(3, 18, 0) <= CFG80211_VERSION_CODE
 int mtk_cfg_tdls_mgmt(struct wiphy *wiphy,
 		      struct net_device *dev,
-		      const u8 *peer, u8 action_code, u8 dialog_token,
+		      const u8 *peer,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+              int link_id,
+#endif
+			  u8 action_code, u8 dialog_token,
 		      u16 status_code, u32 peer_capability,
 		      bool initiator, const u8 *buf, size_t len)
 #elif KERNEL_VERSION(3, 16, 0) <= CFG80211_VERSION_CODE
@@ -7899,7 +7942,11 @@ int mtk_cfg_start_ap(struct wiphy *wiphy,
 
 int mtk_cfg_change_beacon(struct wiphy *wiphy,
 			  struct net_device *dev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+			  struct cfg80211_ap_update *info)
+#else
 			  struct cfg80211_beacon_data *info)
+#endif
 {
 	struct GLUE_INFO *prGlueInfo = NULL;
 
@@ -8022,6 +8069,9 @@ int mtk_cfg_set_txpower(struct wiphy *wiphy,
 
 int mtk_cfg_get_txpower(struct wiphy *wiphy,
 			struct wireless_dev *wdev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+            unsigned int link_id,
+#endif
 			int *dbm)
 {
 	struct GLUE_INFO *prGlueInfo = NULL;

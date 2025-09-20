@@ -2043,7 +2043,12 @@ struct cfg80211_beacon_data {
 #endif
 
 int mtk_p2p_cfg80211_change_beacon(struct wiphy *wiphy,
-		struct net_device *dev, struct cfg80211_beacon_data *info)
+		struct net_device *dev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+			  struct cfg80211_ap_update *info)
+#else
+			  struct cfg80211_beacon_data *info)
+#endif
 {
 	struct GLUE_INFO *prGlueInfo = (struct GLUE_INFO *) NULL;
 	int32_t i4Rslt = -EINVAL;
@@ -2064,6 +2069,17 @@ int mtk_p2p_cfg80211_change_beacon(struct wiphy *wiphy,
 		if (mtk_Netdev_To_RoleIdx(prGlueInfo, dev, &ucRoleIdx) < 0)
 			break;
 
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+		if ((info->beacon.head_len != 0) || (info->beacon.tail_len != 0)) {
+			u4Len = (sizeof(struct MSG_P2P_BEACON_UPDATE)
+				+ info->beacon.head_len
+				+ info->beacon.tail_len
+				+ info->beacon.assocresp_ies_len
+#if CFG_SUPPORT_P2P_GO_OFFLOAD_PROBE_RSP
+				+ info->beacon.proberesp_ies_len
+#endif
+				);
+#else
 		if ((info->head_len != 0) || (info->tail_len != 0)) {
 			u4Len = (sizeof(struct MSG_P2P_BEACON_UPDATE)
 				+ info->head_len
@@ -2073,6 +2089,7 @@ int mtk_p2p_cfg80211_change_beacon(struct wiphy *wiphy,
 				+ info->proberesp_ies_len
 #endif
 				);
+#endif
 
 			prP2pBcnUpdateMsg = (struct MSG_P2P_BEACON_UPDATE *)
 			    cnmMemAlloc(prGlueInfo->prAdapter,
@@ -2091,6 +2108,68 @@ int mtk_p2p_cfg80211_change_beacon(struct wiphy *wiphy,
 				MID_MNY_P2P_BEACON_UPDATE;
 			pucBuffer = prP2pBcnUpdateMsg->aucBuffer;
 
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
+			if (info->beacon.head_len != 0) {
+				kalMemCopy(pucBuffer,
+					info->beacon.head,
+					info->beacon.head_len);
+
+				prP2pBcnUpdateMsg->u4BcnHdrLen = info->beacon.head_len;
+
+				prP2pBcnUpdateMsg->pucBcnHdr = pucBuffer;
+
+				pucBuffer += info->beacon.head_len;
+			} else {
+				prP2pBcnUpdateMsg->u4BcnHdrLen = 0;
+
+				prP2pBcnUpdateMsg->pucBcnHdr = NULL;
+			}
+
+			if (info->beacon.tail_len != 0) {
+				prP2pBcnUpdateMsg->pucBcnBody = pucBuffer;
+				kalMemCopy(pucBuffer,
+					info->beacon.tail,
+					info->beacon.tail_len);
+
+				prP2pBcnUpdateMsg->u4BcnBodyLen =
+					info->beacon.tail_len;
+
+				pucBuffer += info->beacon.tail_len;
+			} else {
+				prP2pBcnUpdateMsg->u4BcnBodyLen = 0;
+				prP2pBcnUpdateMsg->pucBcnBody = NULL;
+			}
+
+			if (info->beacon.assocresp_ies_len != 0
+				&& info->beacon.assocresp_ies != NULL) {
+
+				prP2pBcnUpdateMsg->pucAssocRespIE = pucBuffer;
+				kalMemCopy(pucBuffer,
+					info->beacon.assocresp_ies,
+					info->beacon.assocresp_ies_len);
+				prP2pBcnUpdateMsg->u4AssocRespLen =
+					info->beacon.assocresp_ies_len;
+			} else {
+				prP2pBcnUpdateMsg->u4AssocRespLen = 0;
+				prP2pBcnUpdateMsg->pucAssocRespIE = NULL;
+			}
+
+#if CFG_SUPPORT_P2P_GO_OFFLOAD_PROBE_RSP
+			if (info->beacon.proberesp_ies_len != 0
+				&& info->beacon.proberesp_ies != NULL) {
+
+				prP2pBcnUpdateMsg->pucProbeRespIE = pucBuffer;
+				kalMemCopy(pucBuffer,
+					info->beacon.proberesp_ies,
+					info->beacon.proberesp_ies_len);
+				prP2pBcnUpdateMsg->u4ProbeRespLen =
+					info->beacon.proberesp_ies_len;
+			} else {
+				prP2pBcnUpdateMsg->u4ProbeRespLen = 0;
+				prP2pBcnUpdateMsg->pucProbeRespIE = NULL;
+			}
+#endif
+#else
 			if (info->head_len != 0) {
 				kalMemCopy(pucBuffer,
 					info->head,
@@ -2150,6 +2229,7 @@ int mtk_p2p_cfg80211_change_beacon(struct wiphy *wiphy,
 				prP2pBcnUpdateMsg->u4ProbeRespLen = 0;
 				prP2pBcnUpdateMsg->pucProbeRespIE = NULL;
 			}
+#endif
 #endif
 
 			kalP2PSetRole(prGlueInfo, 2, ucRoleIdx);
@@ -3202,8 +3282,16 @@ int mtk_p2p_cfg80211_disconnect(struct wiphy *wiphy,
 #if (CFG_SUPPORT_SUPPLICANT_SME == 1)
 		if (prGlueInfo->prAdapter->rWifiVar.
 			prP2PConnSettings[ucRoleIdx]->bss) {
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
+		struct cfg80211_assoc_failure data = {
+			.bss[0] = prGlueInfo->prAdapter->rWifiVar.prP2PConnSettings[ucRoleIdx]->bss,
+			.timeout = true,
+		};
+		cfg80211_assoc_failure(dev, &data);
+#else
 			cfg80211_assoc_timeout(dev,
 				prGlueInfo->prAdapter->rWifiVar.prP2PConnSettings[ucRoleIdx]->bss);
+#endif
 			DBGLOG(P2P, EVENT, "assoc timeout notify[%d]\n", ucRoleIdx);
 			prGlueInfo->prAdapter->rWifiVar.
 				prP2PConnSettings[ucRoleIdx]->bss = NULL;

@@ -5184,7 +5184,11 @@ void nicTxDirectTimerCheckSkbQ(unsigned long data)
 
 #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
 	struct ADAPTER *prAdapter =
+#if KERNEL_VERSION(6, 16, 0) <= LINUX_VERSION_CODE
+		timer_container_of(prAdapter, timer, rTxDirectSkbTimer);
+#else
 		from_timer(prAdapter, timer, rTxDirectSkbTimer);
+#endif
 	struct GLUE_INFO *prGlueInfo = prAdapter->prGlueInfo;
 #else
 	struct GLUE_INFO *prGlueInfo = (struct GLUE_INFO *)data;
@@ -5217,7 +5221,11 @@ void nicTxDirectTimerCheckHifQ(unsigned long data)
 
 #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
 	struct ADAPTER *prAdapter =
+#if KERNEL_VERSION(6, 16, 0) <= LINUX_VERSION_CODE
+		timer_container_of(prAdapter, timer, rTxDirectHifTimer);
+#else
 		from_timer(prAdapter, timer, rTxDirectHifTimer);
+#endif
 	struct GLUE_INFO *prGlueInfo = prAdapter->prGlueInfo;
 #else
 	struct GLUE_INFO *prGlueInfo = (struct GLUE_INFO *)data;

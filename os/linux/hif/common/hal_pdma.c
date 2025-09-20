@@ -3173,7 +3173,11 @@ void halHwRecoveryTimeout(unsigned long arg)
 {
 #if KERNEL_VERSION(4, 15, 0) <= LINUX_VERSION_CODE
 	struct GL_HIF_INFO *prHif =
+#if KERNEL_VERSION(6, 16, 0) <= LINUX_VERSION_CODE
+		timer_container_of(prHif, timer, rSerTimer);
+#else
 		from_timer(prHif, timer, rSerTimer);
+#endif
 	struct GLUE_INFO *prGlueInfo =
 		container_of(prHif, typeof(*prGlueInfo), rHifInfo);
 #else
@@ -3336,7 +3340,11 @@ void halHwRecoveryFromError(IN struct ADAPTER *prAdapter)
 
 	case ERR_RECOV_WAIT_MCU_NORMAL:
 		if (u4Status & ERROR_DETECT_MCU_NORMAL_STATE) {
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+			timer_delete_sync(&prHifInfo->rSerTimer);
+#else
 			del_timer_sync(&prHifInfo->rSerTimer);
+#endif
 
 			/* update Beacon frame if operating in AP mode. */
 			DBGLOG(HAL, INFO, "SER(T) Host re-initialize BCN\n");

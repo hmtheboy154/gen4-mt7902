@@ -1095,9 +1095,28 @@ do { \
 #endif
 
 #if defined(_HIF_PCIE)
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+#define KAL_DMA_TO_DEVICE	DMA_TO_DEVICE
+#define KAL_DMA_FROM_DEVICE	DMA_FROM_DEVICE
+#else
 #define KAL_DMA_TO_DEVICE	PCI_DMA_TODEVICE
 #define KAL_DMA_FROM_DEVICE	PCI_DMA_FROMDEVICE
+#endif
 
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+#define KAL_DMA_ALLOC_COHERENT(_dev, _size, _handle) \
+	dma_alloc_coherent(&((struct pci_dev *)(_dev))->dev, \
+			_size, _handle, GFP_ATOMIC)
+#define KAL_DMA_FREE_COHERENT(_dev, _size, _addr, _handle) \
+	dma_free_coherent(&((struct pci_dev *)(_dev))->dev, \
+			_size, _addr, _handle)
+#define KAL_DMA_MAP_SINGLE(_dev, _ptr, _size, _dir) \
+	dma_map_single(&((struct pci_dev *)(_dev))->dev, _ptr, _size, _dir)
+#define KAL_DMA_UNMAP_SINGLE(_dev, _addr, _size, _dir) \
+	dma_unmap_single(&((struct pci_dev *)(_dev))->dev, _addr, _size, _dir)
+#define KAL_DMA_MAPPING_ERROR(_dev, _addr) \
+	dma_mapping_error(&((struct pci_dev *)(_dev))->dev, _addr)
+#else
 #define KAL_DMA_ALLOC_COHERENT(_dev, _size, _handle) \
 	pci_alloc_consistent(_dev, _size, _handle)
 #define KAL_DMA_FREE_COHERENT(_dev, _size, _addr, _handle) \
@@ -1108,6 +1127,7 @@ do { \
 	pci_unmap_single(_dev, _addr, _size, _dir)
 #define KAL_DMA_MAPPING_ERROR(_dev, _addr) \
 	pci_dma_mapping_error(_dev, _addr)
+#endif
 #else
 #define KAL_DMA_TO_DEVICE	DMA_TO_DEVICE
 #define KAL_DMA_FROM_DEVICE	DMA_FROM_DEVICE

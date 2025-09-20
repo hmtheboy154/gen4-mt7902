@@ -5688,8 +5688,13 @@ int32_t wlanOffAtReset(void)
 	wlanOffStopWlanThreads(prGlueInfo);
 	if (HAL_IS_TX_DIRECT(prAdapter)) {
 		if (prAdapter->fgTxDirectInited) {
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+			timer_delete_sync(&prAdapter->rTxDirectSkbTimer);
+			timer_delete_sync(&prAdapter->rTxDirectHifTimer);
+#else
 			del_timer_sync(&prAdapter->rTxDirectSkbTimer);
 			del_timer_sync(&prAdapter->rTxDirectHifTimer);
+#endif
 		}
 	}
 
@@ -6406,8 +6411,13 @@ static void wlanRemove(void)
 
 	if (HAL_IS_TX_DIRECT(prAdapter)) {
 		if (prAdapter->fgTxDirectInited) {
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+			timer_delete_sync(&prAdapter->rTxDirectSkbTimer);
+			timer_delete_sync(&prAdapter->rTxDirectHifTimer);
+#else
 			del_timer_sync(&prAdapter->rTxDirectSkbTimer);
 			del_timer_sync(&prAdapter->rTxDirectHifTimer);
+#endif
 		}
 	}
 
