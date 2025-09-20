@@ -1,3 +1,14 @@
+## Predefined values so we only need to run make to build
+srctree ?= .
+src ?= .
+
+KVER := $(shell uname -r)
+VERSION ?= $(shell echo $(KVER) | cut -d. -f1)
+PATCHLEVEL ?= $(shell echo $(KVER) | cut -d. -f2)
+MODULE_NAME=mt7902
+MTK_ANDROID_WMT=n
+MTK_ANDROID_EMI=n
+
 # ---------------------------------------------------
 # Kbuild option
 # ---------------------------------------------------
@@ -7,7 +18,7 @@ ifneq ($(srctree),)
 hif=pcie
 include $(srctree)/$(src)/Makefile.x86
 src:=$(srctree)/$(shell echo ${src})
-MTK_COMBO_CHIP=MT7961
+MTK_COMBO_CHIP=MT7902
 $(info Kbuild chip: $(MTK_COMBO_CHIP))
 $(info Kbuild hif : $(CONFIG_MTK_COMBO_WIFI_HIF))
 endif
