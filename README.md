@@ -55,6 +55,9 @@ Currently the driver is being tested on some of these models:
 
 ## FAQs
 
+### What's the minimum kernel version that the driver is going to aim ?
+I'm thinking 5.4+. Older version may work, but you're on your own.
+
 ### Will you be around fixing bugs & maintain this driver ?
 I will try, but my knowledge & abilities are very limited. Not to mention I am very busy right now due to spending time on [BlissOS](https://blissos.org/) & focusing most of my time on university's capsule project.
 
