@@ -5185,7 +5185,7 @@ void rlmDomainSendPwrLimitCmd_V2(struct ADAPTER *prAdapter)
 	}
 
 	/* restore back to default value */
-	prAdapter->chip_info->prTxPwrLimitFile = "TxPwrLimit_MT79x1.dat";
+	prAdapter->chip_info->prTxPwrLimitFile = "mediatek/mt7902/TxPwrLimit_MT79x1.dat";
 #endif /* #if (CFG_SUPPORT_SINGLE_SKU_6G == 1) */
 
 error:
@@ -5210,7 +5210,7 @@ error:
 			sizeof(struct TX_PWR_LEGACY_LIMIT_DATA));
 
         /* restore back to default value */
-        prAdapter->chip_info->prTxPwrLimitFile = "TxPwrLimit_MT79x1.dat";
+        prAdapter->chip_info->prTxPwrLimitFile = "mediatek/mt7902/TxPwrLimit_MT79x1.dat";
 #endif
 }
 

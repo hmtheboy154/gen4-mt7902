@@ -1636,7 +1636,7 @@ struct mt66xx_chip_info mt66xx_chip_info_mt7902 = {
 #endif
 #endif
 	.asicSerInit = mt7961SerInit,
-	.prTxPwrLimitFile = "TxPwrLimit_MT79x1.dat",
+	.prTxPwrLimitFile = "mediatek/mt7902/TxPwrLimit_MT79x1.dat",
 	.ucTxPwrLimitBatchSize = 8,
 
 	/* buzzard capability:
