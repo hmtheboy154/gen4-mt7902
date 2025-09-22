@@ -1912,9 +1912,9 @@ uint32_t saaFsmRunEventRxDeauth(IN struct ADAPTER *prAdapter,
 						saaChkDeauthfrmParamHandler(
 							prAdapter, prSwRfb,
 							prStaRec);
-					    if (prStaRec->fgIsTxAllowed)
+					    if (prStaRec->fgIsTxAllowed){
 							DBGLOG(RSN, INFO,
-							"ignore no sec deauth\n");
+							"ignore no sec deauth\n");}
 
 						return WLAN_STATUS_SUCCESS;
 					}
@@ -2232,9 +2232,9 @@ uint32_t saaFsmRunEventRxDisassoc(IN struct ADAPTER *prAdapter,
 						      prAdapter,
 						      prDisassocFrame, prStaRec,
 						      prSwRfb);
-					    if (prStaRec->fgIsTxAllowed)
+					    if (prStaRec->fgIsTxAllowed){
 							DBGLOG(RSN, INFO,
-							"ignore no sec disassoc\n");
+							"ignore no sec disassoc\n");}
 
 						return WLAN_STATUS_SUCCESS;
 					}
