@@ -11,7 +11,7 @@ The driver is buildable and loadable. It can be able to connect to 2.4Ghz wifi s
 
 - Lack of power management making sleep broke & on next restart the driver is broken when being loaded. (you have to force shut down using power button to fix this).
 - Can't switch to 5Ghz if you are on a SSID with both 2.4/5.
-- Can't use hotspot from phones, it just scan.
+- Can't be able to connect to WPA3 networks.
 - Can't create wifi hotspot to act as a repeater.
 - Chunky compiled size with almost ~100mb, might be due to the debug code it has.
 
