@@ -811,7 +811,7 @@ int mtk_cfg_set_txpower(struct wiphy *wiphy,
 			enum nl80211_tx_power_setting type, int mbm);
 int mtk_cfg_get_txpower(struct wiphy *wiphy,
 			struct wireless_dev *wdev,
-#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 14, 0)
             unsigned int link_id,
 #endif
 			int *dbm);
