@@ -4888,6 +4888,9 @@ int mtk_cfg80211_assoc(struct wiphy *wiphy,
 					prConnSettings->rRsnInfo.aucPmkidList,
 					(prConnSettings->rRsnInfo.u2PmkidCnt *
 								RSN_PMKID_LEN));
+
+				GET_BSS_INFO_BY_INDEX(prGlueInfo->prAdapter,
+				  ucBssIndex)->u2RsnSelectedCapInfo = rRsnInfo.u2RsnCap;
 			}
 		}
 
