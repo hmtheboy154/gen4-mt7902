@@ -100,6 +100,7 @@ const long channel_freq[] = {
 
 #define MAX_SSID_LEN    32
 #define COUNTRY_CODE_LEN	10	/* country code length */
+#define IW_AUTH_WPA_VERSION_WPA3        0x00000008
 
 /*******************************************************************************
  *                             D A T A   T Y P E S
@@ -4598,11 +4599,11 @@ wext_indicate_wext_event(IN struct GLUE_INFO *prGlueInfo,
 		break;
 
 	case IWEVPMKIDCAND:
-		if (prWpaInfo->u4WpaVersion ==
-		    IW_AUTH_WPA_VERSION_WPA2 &&
+		if ((prWpaInfo->u4WpaVersion == IW_AUTH_WPA_VERSION_WPA2 ||
+		     prWpaInfo->u4WpaVersion == IW_AUTH_WPA_VERSION_WPA3) &&
 		    prWpaInfo->u4KeyMgmt == IW_AUTH_KEY_MGMT_802_1X) {
 
-			/* only used in WPA2 */
+			/* only used in WPA2 & WPA3 */
 #if WIRELESS_EXT >= 18
 			struct PARAM_PMKID_CANDIDATE *prPmkidCand =
 				(struct PARAM_PMKID_CANDIDATE *) pucData;

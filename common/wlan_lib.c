@@ -88,6 +88,7 @@ const uint8_t aucPriorityParam2TC[] = {
 	TC3_INDEX,
 	TC3_INDEX
 };
+#define IW_AUTH_WPA_VERSION_WPA3        0x00000008
 
 /*******************************************************************************
  *                             D A T A   T Y P E S
@@ -11749,6 +11750,9 @@ wlanSuspendRekeyOffload(struct GLUE_INFO *prGlueInfo, uint8_t ucRekeyMode)
 			prAisBssInfo->ucBssIndex;
 
 		prGtkData->u4Proto = NL80211_WPA_VERSION_2;
+		if (prWpaInfo->u4WpaVersion ==
+					IW_AUTH_WPA_VERSION_WPA3)
+			prGtkData->u4Proto = NL80211_WPA_VERSION_3;
 		if (prWpaInfo->u4WpaVersion ==
 					IW_AUTH_WPA_VERSION_WPA)
 			prGtkData->u4Proto = NL80211_WPA_VERSION_1;
