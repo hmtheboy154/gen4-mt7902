@@ -793,6 +793,9 @@ int mtk_cfg_stop_ap(struct wiphy *wiphy, struct net_device *dev,
 int mtk_cfg_stop_ap(struct wiphy *wiphy, struct net_device *dev);
 #endif
 int mtk_cfg_set_wiphy_params(struct wiphy *wiphy,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 17, 0)
+				 int radio_idx,
+#endif
 			     u32 changed);
 #if (CFG_ADVANCED_80211_MLO == 1)
 int mtk_cfg_set_bitrate_mask(struct wiphy *wiphy,
@@ -808,9 +811,15 @@ int mtk_cfg_set_bitrate_mask(struct wiphy *wiphy,
 #endif
 int mtk_cfg_set_txpower(struct wiphy *wiphy,
 			struct wireless_dev *wdev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 17, 0)
+			int radio_idx,
+#endif
 			enum nl80211_tx_power_setting type, int mbm);
 int mtk_cfg_get_txpower(struct wiphy *wiphy,
 			struct wireless_dev *wdev,
+#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 17, 0)
+			int radio_idx,
+#endif
 #if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 14, 0)
             unsigned int link_id,
 #endif
