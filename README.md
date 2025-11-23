@@ -26,42 +26,89 @@ There are some features that are untested such as Bluetooth (which is not covere
 > Before building & installing this driver, remember to install essential packages to build a kernel driver like linux kernel's headers & toolchain. I will not cover it here.
 
 - Get the source by using `git`
-```
+
+```bash
 git clone https://github.com/hmtheboy154/gen4-mt7902
 cd gen4-mt7902
 ```
 
 - To only build the driver, use this command
-```
+
+```bash
 make -j$(nproc)
 ```
 
 - To build the driver & install it, use this command
-```
+
+```bash
 sudo make install -j$(nproc)
 ```
 
 - To install the firmware required for the driver, use this command
-```
+
+```bash
 sudo make install_fw
 ```
 
 Once you got the driver & firmware installed, reboot to see changes.
 
+### Automatic installation via DKMS
+
+If you want the driver to be automatically rebuilt after each kernel update, use DKMS:
+
+- Install DKMS:
+
+```bash
+# Debian/Ubuntu
+sudo apt install dkms
+
+# Fedora
+sudo dnf install dkms
+
+# Arch
+sudo pacman -S dkms
+```
+
+- Copy the source to `/usr/src`:
+
+```bash
+sudo mkdir -p /usr/src/mt7902-1.0
+sudo cp -r * /usr/src/mt7902-1.0/
+```
+
+- Register, build, and install the driver with DKMS:
+
+```bash
+sudo dkms add -m mt7902 -v 1.0
+sudo dkms build -m mt7902 -v 1.0
+sudo dkms install -m mt7902 -v 1.0
+```
+
+- To install the firmware required for the driver, use this command (if you didn't install it before)
+
+```bash
+sudo make install_fw
+```
+
+After reboot, the driver should be loaded automatically, and DKMS will rebuild it for any future kernel updates.
+
 ## Tested hardware
 
 Currently the driver is being tested on some of these models:
+
 - WMDM-257AX (tested without antenna connected)
 
 ## FAQs
 
 ### What's the minimum kernel version that the driver is going to aim ?
+
 I'm thinking 5.4+. Older version may work, but you're on your own.
 
 ### Will you be around fixing bugs & maintain this driver ?
+
 I will try, but my knowledge & abilities are very limited. Not to mention I am very busy right now due to spending time on [BlissOS](https://blissos.org/) & focusing most of my time on university's capsule project.
 
-Any contributions to the project especially during these times are like ***✨gold✨*** to me, thank you very much. 🙏
+Any contributions to the project especially during these times are like **_✨gold✨_** to me, thank you very much. 🙏
 
 ### From the info gathered in this driver, can we add MT7902 support to mt76 driver ?
 
