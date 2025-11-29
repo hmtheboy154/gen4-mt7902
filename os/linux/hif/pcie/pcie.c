@@ -595,7 +595,7 @@ int mtk_pci_resume(struct pci_dev *pdev)
 }
 
 /* Wrap modern dev_pm_ops checks in gaurds and keep the legacy pci suspend and resume setup for backwards compatiblity */
-#if IS_ENABLED(CONFIG_PM)PMSG_SU
+#if IS_ENABLED(CONFIG_PM)
 /* These _pm_ tiny wrappers for the suspend and resume methods have the signature
  * that is expected by the dev_pm_ops
  */
