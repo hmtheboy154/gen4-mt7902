@@ -594,7 +594,11 @@ int mtk_pci_resume(struct pci_dev *pdev)
 	return 0;
 }
 
-#if IS_ENABLED(CONFIG_PM)
+/* Wrap modern dev_pm_ops checks in gaurds and keep the legacy pci suspend and resume setup for backwards compatiblity */
+#if IS_ENABLED(CONFIG_PM)PMSG_SU
+/* These _pm_ tiny wrappers for the suspend and resume methods have the signature
+ * that is expected by the dev_pm_ops
+ */
 static int mtk_pci_pm_suspend(struct device *dev)
 {
 	return mtk_pci_suspend(to_pci_dev(dev), PMSG_SUSPEND);
@@ -605,6 +609,9 @@ static int mtk_pci_pm_resume(struct device *dev)
 	return mtk_pci_resume(to_pci_dev(dev));
 }
 
+/* Use the SET_SYSTEM_SLEEP_PM_OPS helper to create the dev_pm_ops struct that will
+ * be set as the pm struct on the driver
+ */
 static const struct dev_pm_ops mtk_pci_pm_ops = {
 	SET_SYSTEM_SLEEP_PM_OPS(mtk_pci_pm_suspend, mtk_pci_pm_resume)
 };
@@ -616,6 +623,7 @@ static void mtk_pci_shutdown(struct pci_dev *pdev)
 
 #if IS_ENABLED(CONFIG_PM)
 	/* Try to follow the suspend path to leave firmware in a clean state */
+	/* Note the legacy api driver.suspend/driver.resume were called on sleep, but not on reboot/shutdown */
 	mtk_pci_suspend(pdev, PMSG_SUSPEND);
 #endif
 
