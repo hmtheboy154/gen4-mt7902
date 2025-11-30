@@ -180,12 +180,19 @@ u_int8_t kalDevRegRead(IN struct GLUE_INFO *prGlueInfo,
 	struct BUS_INFO *prBusInfo = NULL;
 	uint32_t u4BusAddr = u4Register;
 
-	ASSERT(prGlueInfo);
-	ASSERT(pu4Value);
+	if (!pu4Value) {
+		DBGLOG(INIT, ERROR, "pu4Value is NULL.\n");
+		return FALSE;
+	}
 
-	prHifInfo = &prGlueInfo->rHifInfo;
-	prAdapter = prGlueInfo->prAdapter;
-	ASSERT(prAdapter);
+	if (prGlueInfo) {
+		prHifInfo = &prGlueInfo->rHifInfo;
+		prAdapter = prGlueInfo->prAdapter;
+		if (!prAdapter || !prAdapter->chip_info) {
+			DBGLOG(INIT, ERROR, "prAdapter is NULL.\n");
+			return FALSE;
+		}
+	}
 	prBusInfo = prAdapter->chip_info->bus_info;
 
 	if (!prHifInfo->fgIsDumpLog && prBusInfo->isValidRegAccess &&
@@ -241,11 +248,14 @@ u_int8_t kalDevRegWrite(IN struct GLUE_INFO *prGlueInfo,
 	struct BUS_INFO *prBusInfo = NULL;
 	uint32_t u4BusAddr = u4Register;
 
-	ASSERT(prGlueInfo);
-
-	prHifInfo = &prGlueInfo->rHifInfo;
-	prAdapter = prGlueInfo->prAdapter;
-	ASSERT(prAdapter);
+	if (prGlueInfo) {
+		prHifInfo = &prGlueInfo->rHifInfo;
+		prAdapter = prGlueInfo->prAdapter;
+		if (!prAdapter || !prAdapter->chip_info) {
+			DBGLOG(INIT, ERROR, "prAdapter is NULL.\n");
+			return FALSE;
+		}
+	}
 	prBusInfo = prAdapter->chip_info->bus_info;
 
 	if (!prHifInfo->fgIsDumpLog && prBusInfo->isValidRegAccess &&
