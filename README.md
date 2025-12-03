@@ -51,6 +51,7 @@ Once you got the driver & firmware installed, reboot to see changes.
 
 Currently the driver is being tested on some of these models:
 - WMDM-257AX (tested without antenna connected)
+- AW-XB552NF
 
 ## FAQs
 
