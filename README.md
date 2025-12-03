@@ -96,6 +96,7 @@ After reboot, the driver should be loaded automatically, and DKMS will rebuild i
 Currently the driver is being tested on some of these models:
 
 - WMDM-257AX (tested without antenna connected)
+- AW-XB552NF
 
 ## FAQs
 
