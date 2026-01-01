@@ -72,16 +72,16 @@ sudo pacman -S dkms
 - Copy the source to `/usr/src`:
 
 ```bash
-sudo mkdir -p /usr/src/gen4-mt7902-1.0
-sudo cp -r * /usr/src/gen4-mt7902-1.0/
+sudo mkdir -p /usr/src/gen4-mt7902-0.1
+sudo cp -r * /usr/src/gen4-mt7902-0.1/
 ```
 
 - Register, build, and install the driver with DKMS:
 
 ```bash
-sudo dkms add -m gen4-mt7902 -v 1.0
-sudo dkms build -m gen4-mt7902 -v 1.0
-sudo dkms install -m gen4-mt7902 -v 1.0
+sudo dkms add -m gen4-mt7902 -v 0.1
+sudo dkms build -m gen4-mt7902 -v 0.1
+sudo dkms install -m gen4-mt7902 -v 0.1
 ```
 
 - To install the firmware required for the driver, use this command (if you didn't install it before)
