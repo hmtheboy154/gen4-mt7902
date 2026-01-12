@@ -9,13 +9,15 @@ This is a driver for the Mediatek MT7902 PCIe card based on the `gen4-mt79xx` dr
 
 The driver is buildable and loadable. It can be able to connect to 2.4Ghz wifi so far. However, upon testing, I've noticed these issues:
 
-- Can't switch to 5Ghz if you are on a SSID with both 2.4/5.
-- Can't be able to connect to WPA3 networks.
+- Can't switch to 5Ghz if you are on a SSID with both 2.4/5. (it could be because I test this card without antenna !)
+- WPA3 broken when using `iwd` according to this [finding](https://github.com/hmtheboy154/gen4-mt7902/issues/7#issuecomment-3622679513), so use `wpa_supplicant` instead.
 - Can't create wifi hotspot to act as a repeater.
 - Chunky compiled size with almost ~100mb, might be due to the debug code it has.
+- Suspend using s2idle is working thanks to [kadenslater95](https://github.com/kadenslater95), S3 suspend is broken and will show black screen when waking up.
+- There are some reports about the driver causing kernel panic, mostly on ASUS hardware with the AW-XB552NF card. The panic looks like [this](https://tinyurl.com/2s74vtkx) 
 
 > [!WARNING]
-> If the wifi is ever flaky just restart your device and it should kick back on.
+> If the wifi is ever flaky just restart your device and it should kick back on. If it doesn't work or the card power management is broken, use `sudo rmmod mt7902` whenever you wanna sleep or shut down the device !
 
 There are some features that are untested such as Bluetooth (which is not covered by this driver) and WIFI 6/6E.
 
@@ -98,6 +100,9 @@ Currently the driver is being tested on some of these models:
 - WMDM-257AX (tested without antenna connected)
 - AW-XB552NF
 
+> [!CAUTION]
+> For AW-XB552NF, you might want to read [Status](#status) again 
+
 ## FAQs
 
 ### What's the minimum kernel version that the driver is going to aim ?
@@ -127,3 +132,7 @@ Maybe ? I've tried to compare [gen4m's MT7961](https://github.com/MiCode/MTK_ker
 ### Is there a place like a group chat that we can talk about the development of the driver ?
 
 There's this [Discord group](https://discord.gg/JGhjAxEFhz) that I [found](https://github.com/OnlineLearningTutorials/mt7902_temp/issues/8#issuecomment-2933979855).
+
+### Is there any documents to show which device has been tested ? I want to check/contribute to it.
+
+There's one on the Discord group above.
