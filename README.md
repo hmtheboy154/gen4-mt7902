@@ -21,6 +21,25 @@ The driver is buildable and loadable. It can be able to connect to 2.4Ghz wifi s
 
 There are some features that are untested such as Bluetooth (which is not covered by this driver) and WIFI 6/6E.
 
+
+## Autoinstall guide
+### 1 Download autoinstall-beta-mt7902.sh
+
+### 2 Give it execution permission
+```
+chmod +x autoinstall-beta-mt7902.sh
+```
+
+### 3 Run the script with sudo
+```
+sudo ./autoinstall-beta-mt7902.sh
+```
+
+The script automatically detects if it is Debian, Fedora or Arch to use the appropriate commands
+
+
+
+
 ## Installation guide
 
 > [!IMPORTANT]
