@@ -1409,7 +1409,7 @@ static void rlmSetEd_EU(struct ADAPTER *prAdapter, uint32_t u4CountryCode)
 void rlmDomainSendDomainInfoCmd_V2(struct ADAPTER *prAdapter)
 {
 #if (CFG_SUPPORT_SINGLE_SKU == 1)
-	u8 max_channel_count = 0;
+	u32 max_channel_count = 0;
 	u32 buff_max_size, buff_valid_size;
 	struct CMD_SET_DOMAIN_INFO_V2 *prCmd;
 	struct CMD_DOMAIN_ACTIVE_CHANNEL_LIST *prChs;
