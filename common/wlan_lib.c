@@ -4746,6 +4746,10 @@ uint32_t wlanQueryPdMcr(IN struct ADAPTER *prAdapter,
 	u4EventSize = prChipInfo->rxd_size + prChipInfo->event_hdr_size +
 		struct CMD_ACCESS_REG;
 	aucBuffer = kalMemAlloc(u4EventSize, PHY_MEM_TYPE);
+	if (!aucBuffer) {
+		DBGLOG(INIT, ERROR, "Not enough memory for aucBuffer\n");
+		return WLAN_STATUS_FAILURE;
+	}
 
 #ifndef CFG_SUPPORT_UNIFIED_COMMAND
 	/* compose CMD_BUILD_CONNECTION cmd pkt */
