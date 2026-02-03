@@ -1155,18 +1155,22 @@ uint32_t wlanAdapterStart(IN struct ADAPTER *prAdapter,
 
 		wlanOnPostNicInitAdapter(prAdapter, prRegInfo, bAtResetFlow);
 
-		u4Status = wlanWakeUpWiFi(prAdapter);
-		if (u4Status != WLAN_STATUS_SUCCESS) {
-			DBGLOG(INIT, ERROR, "wlanWakeUpWiFi failed!\n");
-			u4Status = WLAN_STATUS_FAILURE;
-			break;
-		}
-
-		/* 4 <5> HIF SW info initialize */
+		/* 4 <5> HIF SW info initialize
+		 * Must be called before wlanWakeUpWiFi() because if WiFi hardware
+		 * is already ON, wlanWakeUpWiFi() attempts to power it off first,
+		 * which requires sending commands via the TX DMA rings.
+		 */
 		if (!halHifSwInfoInit(prAdapter)) {
 			DBGLOG(INIT, ERROR, "halHifSwInfoInit failed!\n");
 			u4Status = WLAN_STATUS_FAILURE;
 			eFailReason = INIT_HIFINFO_FAIL;
+			break;
+		}
+
+		u4Status = wlanWakeUpWiFi(prAdapter);
+		if (u4Status != WLAN_STATUS_SUCCESS) {
+			DBGLOG(INIT, ERROR, "wlanWakeUpWiFi failed!\n");
+			u4Status = WLAN_STATUS_FAILURE;
 			break;
 		}
 
