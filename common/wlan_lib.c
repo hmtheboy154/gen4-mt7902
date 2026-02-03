@@ -4583,7 +4583,18 @@ uint32_t wlanQueryNicCapability(IN struct ADAPTER
 			NULL, FALSE, 0, S2D_INDEX_CMD_H2N,
 			prCmdInfo->fgNeedResp);
 
-	wlanSendCommand(prAdapter, prCmdInfo);
+	{
+		uint32_t rStatus = wlanSendCommand(prAdapter, prCmdInfo);
+
+		if (rStatus != WLAN_STATUS_SUCCESS &&
+		    rStatus != WLAN_STATUS_PENDING) {
+			DBGLOG(INIT, WARN, "%s: send command failed! status=%u\n",
+			       __func__, rStatus);
+			cmdBufFreeCmdInfo(prAdapter, prCmdInfo);
+			kalMemFree(aucBuffer, PHY_MEM_TYPE, u4EventSize);
+			return WLAN_STATUS_FAILURE;
+		}
+	}
 
 	cmdBufFreeCmdInfo(prAdapter, prCmdInfo);
 
@@ -4777,7 +4788,18 @@ uint32_t wlanQueryPdMcr(IN struct ADAPTER *prAdapter,
 	kalMemCopy(prCmdMcrQuery, prMcrRdInfo,
 		   sizeof(struct CMD_ACCESS_REG));
 
-	wlanSendCommand(prAdapter, prCmdInfo);
+	{
+		uint32_t rStatus = wlanSendCommand(prAdapter, prCmdInfo);
+
+		if (rStatus != WLAN_STATUS_SUCCESS &&
+		    rStatus != WLAN_STATUS_PENDING) {
+			DBGLOG(INIT, WARN, "%s: send command failed! status=%u\n",
+			       __func__, rStatus);
+			cmdBufFreeCmdInfo(prAdapter, prCmdInfo);
+			kalMemFree(aucBuffer, PHY_MEM_TYPE, u4EventSize);
+			return WLAN_STATUS_FAILURE;
+		}
+	}
 	cmdBufFreeCmdInfo(prAdapter, prCmdInfo);
 #else
 	wlanSendSetQueryCmdHelper(
@@ -6533,7 +6555,18 @@ uint32_t wlanQueryNicCapabilityV2(IN struct ADAPTER *prAdapter)
 			NULL, FALSE, 0, S2D_INDEX_CMD_H2N,
 			prCmdInfo->fgNeedResp);
 
-		wlanSendCommand(prAdapter, prCmdInfo);
+		{
+			uint32_t rStatus = wlanSendCommand(prAdapter, prCmdInfo);
+
+			if (rStatus != WLAN_STATUS_SUCCESS &&
+			    rStatus != WLAN_STATUS_PENDING) {
+				DBGLOG(INIT, WARN,
+				       "%s: send command failed! status=%u\n",
+				       __func__, rStatus);
+				cmdBufFreeCmdInfo(prAdapter, prCmdInfo);
+				return WLAN_STATUS_FAILURE;
+			}
+		}
 
 		cmdBufFreeCmdInfo(prAdapter, prCmdInfo);
 
