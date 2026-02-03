@@ -6944,6 +6944,7 @@ static void kalProcessCfg80211RxPkt(struct PARAM_CFG80211_REQ *prCfg80211Req)
 #if (KERNEL_VERSION(5, 1, 0) <= CFG80211_VERSION_CODE)
 		/* [TODO] Set uapsd_queues/req_ies/req_ies_len properly */
 #if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
+	{
 #if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 7, 0)
 		struct cfg80211_rx_assoc_resp_data resp = {
 #else
@@ -6958,6 +6959,7 @@ static void kalProcessCfg80211RxPkt(struct PARAM_CFG80211_REQ *prCfg80211Req)
 		resp.req_ies_len = 0;
 		resp.uapsd_queues = 0;
 		cfg80211_rx_assoc_resp(prCfg80211Req->prDevHandler, &resp);
+	}
 #else
 		cfg80211_rx_assoc_resp(prCfg80211Req->prDevHandler,
 			prCfg80211Req->bss,
