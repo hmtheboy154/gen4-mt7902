@@ -2,7 +2,7 @@
 srctree ?= .
 src ?= .
 
-KVER := $(shell uname -r)
+KVER ?= $(shell uname -r)
 VERSION ?= $(shell echo $(KVER) | cut -d. -f1)
 PATCHLEVEL ?= $(shell echo $(KVER) | cut -d. -f2)
 MODULE_NAME=mt7902
