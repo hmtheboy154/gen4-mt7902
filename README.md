@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project is now discontinued. Mediatek has released [official patches to support MT7902 on mt76 driver](https://www.phoronix.com/news/Mediatek-MT7902-Linux-Patches) including both SDIO & PCIe. I can finally put this project to rest. mt76 support will available soon, or you can check out my [backporting attempt](https://github.com/hmtheboy154/mt7902/tree/backport) here.
+
 > [!CAUTION]
 > This driver is still in Work-In-Progress state ! Using it requires extra work which will be explained below. It is not suitable for everyday use yet !
 
