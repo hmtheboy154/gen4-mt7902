@@ -2477,7 +2477,7 @@ struct ACTION_NEIGHBOR_REPORT_FRAME {
 struct SUB_ELEMENT {
 	uint8_t ucSubID;
 	uint8_t ucLength;
-	uint8_t aucOptInfo[1];
+	uint8_t aucOptInfo[];  /* C99 flexible array member */
 } __KAL_ATTRIB_PACKED__;
 
 struct SM_BASIC_REQ {

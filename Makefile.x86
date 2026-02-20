@@ -19,6 +19,20 @@ export MTK_COMBO_CHIP=MT7902
 PWD=$(shell pwd)
 DRIVER_DIR=$(PWD)
 
+# ---------------------------------------------------
+# Compiler Detection - match kernel's compiler
+# ---------------------------------------------------
+KERNEL_IS_CLANG := $(shell grep -qs 'CONFIG_CC_IS_CLANG' $(LINUX_SRC)/include/generated/autoconf.h && echo 1 || echo 0)
+
+ifeq ($(KERNEL_IS_CLANG),1)
+    CC := clang
+    HOSTCC := clang
+    LLVM_FLAGS := LLVM=1 LLVM_IAS=1
+    $(info Building with clang (kernel built with CONFIG_CC_IS_CLANG))
+else
+    LLVM_FLAGS :=
+endif
+
 #Handle the compression option for modules in 3.18+
 ifneq ("","$(wildcard $(MT76DIR)/*.ko.gz)")
 COMPRESS_GZIP := y
@@ -261,15 +275,11 @@ endif
 endif
 
 driver:
-	+cd $(DRIVER_DIR) && make -C $(LINUX_SRC) M=$(DRIVER_DIR) PLATFORM_FLAGS="$(PLATFORM_FLAGS)" modules
-
-# driver:
-#	+cd $(DRIVER_DIR) && make -C $(LINUX_SRC) M=$(DRIVER_DIR) PLATFORM_FLAGS="$(PLATFORM_FLAGS)" modules
-#	@cd $(DRIVER_DIR) && cp $(MODULES_NAME)_$(hif).ko $(MODULES_NAME).ko
+	+cd $(DRIVER_DIR) && make -C $(LINUX_SRC) M=$(DRIVER_DIR) $(LLVM_FLAGS) PLATFORM_FLAGS="$(PLATFORM_FLAGS)" modules
 
 clean: driver_clean
 
 driver_clean:
-	cd $(DRIVER_DIR) && make -C $(LINUX_SRC) M=$(DRIVER_DIR) clean
+	cd $(DRIVER_DIR) && make -C $(LINUX_SRC) M=$(DRIVER_DIR) $(LLVM_FLAGS) clean
 
 .PHONY: all clean driver driver_clean

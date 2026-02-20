@@ -6904,7 +6904,7 @@ void aisSendNeighborRequest(struct ADAPTER *prAdapter,
 	uint8_t ucBssIndex)
 {
 	struct SUB_ELEMENT_LIST *prSSIDIE;
-	uint8_t aucBuffer[sizeof(*prSSIDIE) + 31];
+	uint8_t aucBuffer[sizeof(*prSSIDIE) + ELEM_MAX_LEN_SSID];
 	struct BSS_INFO *prBssInfo
 		= aisGetAisBssInfo(prAdapter, ucBssIndex);
 

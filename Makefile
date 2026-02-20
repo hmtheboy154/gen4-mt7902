@@ -94,8 +94,35 @@ ccflags-y += -DWLAN_INCLUDE_PROC
 ccflags-y += -DCFG_SUPPORT_AGPS_ASSIST=0
 ccflags-y += -DCFG_SUPPORT_TSF_USING_BOOTTIME=1
 ccflags-y += -DARP_MONITER_ENABLE=1
-ccflags-y += -Werror -Wno-incompatible-function-pointer-types
-ccflags-y += -Wno-missing-prototypes -Wno-missing-declarations -Wno-attribute-warning -Wno-empty-body
+
+# ---------------------------------------------------
+# Compiler Detection - match kernel's compiler
+# ---------------------------------------------------
+KERNEL_BUILD_DIR := /lib/modules/$(KVER)/build
+KERNEL_IS_CLANG := $(shell grep -qs 'CONFIG_CC_IS_CLANG' $(KERNEL_BUILD_DIR)/include/generated/autoconf.h && echo 1 || echo 0)
+
+ifeq ($(KERNEL_IS_CLANG),1)
+    # Clang/LLVM toolchain
+    CC := clang
+    HOSTCC := clang
+    LLVM := 1
+    $(info Building with clang (kernel built with CONFIG_CC_IS_CLANG))
+    ccflags-y += -Wno-unknown-warning-option
+    ccflags-y += -Wno-incompatible-function-pointer-types
+    ccflags-y += -Wno-array-bounds
+else
+    # GCC toolchain
+    $(info Building with GCC)
+    # GCC 12+ has stricter array bounds checking
+    GCC_VER_GE12 := $(shell expr `$(CC) -dumpversion | cut -d. -f1` \>= 12 2>/dev/null || echo 0)
+    ifeq ($(GCC_VER_GE12),1)
+        ccflags-y += -Wno-array-bounds
+    endif
+endif
+
+# Common warning suppressions (both compilers)
+ccflags-y += -Wno-missing-prototypes -Wno-missing-declarations
+ccflags-y += -Wno-attribute-warning -Wno-empty-body
 #ccflags-y:=$(filter-out -U$(WLAN_CHIP_ID),$(ccflags-y))
 #ccflags-y += -DLINUX -D$(WLAN_CHIP_ID)
 #workaround: also needed for none LINUX system

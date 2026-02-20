@@ -3767,7 +3767,7 @@ void p2pFuncValidateRxActionFrame(IN struct ADAPTER *prAdapter,
 					prActPubVenFrame->ucPubSubType,
 					&fgBufferFrame);
 		}
-		/* Fall through */
+		fallthrough;
 	default:
 		break;
 	}
